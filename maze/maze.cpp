@@ -19,12 +19,42 @@ void init_maze() {
     int goal2 = (MAZE_SIZE - 1) / 2;
     for (int i = 0; i < MAZE_SIZE; i++) {
         for (int j = 0; j < MAZE_SIZE; j++) {
-            maze[i][j] = min4(manhattan_dist(i, goal1, j, goal1),
-                              manhattan_dist(i, goal1, j, goal2)
-                              manhattan_dist(i, goal2, j, goal1)
-                              manhattan_dist(i, goal2, j, goal2));
+            maze[i][j] = new Cell(min4(manhattan_dist(i, goal1, j, goal1),
+                              manhattan_dist(i, goal1, j, goal2),
+                              manhattan_dist(i, goal2, j, goal1),
+                              manhattan_dist(i, goal2, j, goal2)));
         }
     }
+}
+
+void update_distances(vector<Cell*> &stack) {
+    Cell *current, *top, *right, *bottom, *left;
+    int neighbor_dist[4];
+    int x, y;
+    int min;
+    while (!stack.empty()) {
+        current = stack.back();
+        stack.pop_back();
+        x = current->x;
+        y = current->y;
+        if (y < MAZE_SIZE - 1)
+            top = maze[x][y+1];
+        if (x < MAZE_SIZE - 1)
+            right = maze[x+1][y];
+        if (y > 0)
+            bottom = maze[x][y-1];
+        if (x > 0)
+            left = maze[x-1][y];
+        min = min4(top->dist, right->dist, bottom->dist, left->dist);
+        if (current->dist - 1 != min) {
+            current->dist = min + 1;
+            stack.push_back(top);
+            stack.push_back(right);
+            stack.push_back(bottom);
+            stack.push_back(left);
+        }
+    }
+
 }
 
 /*
@@ -74,6 +104,7 @@ void print_maze() {
     }
     cout << s << endl;
 }
+
 
 int main() {
     init_maze();
