@@ -1,7 +1,10 @@
-#ifndef __MAZE_H __
-#define __MAZE_H __
+#ifndef __MAZE_H__
+#define __MAZE_H__
 
 #include <cmath>
+#include <ctime>
+#include <cstdlib>
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -11,23 +14,23 @@
 #define Bottom 2
 #define Left 3
 
-const int MAZE_SIZE = 16;
-
-extern Cell *maze[MAZE_SIZE][MAZE_SIZE];
+const int MAZE_SIZE = 4;
 
 class Cell {
 
 public:
-    int x;
     int y;
+    int x;
     unsigned char dist;
     bool top_wall;
     bool right_wall;
 
-    Cell() : x(x), y(y), dist(0), top_wall(false), right_wall(false) {}
-    Cell(int dist) : x(x), y(y), dist(dist), top_wall(false), right_wall(false) { }
+    Cell(int y, int x) : y(y), x(x), dist(0), top_wall(false), right_wall(false) {}
+    Cell(int y, int x, int dist) : y(y), x(x), dist(dist), top_wall(false), right_wall(false) {if (y == 0 && x == 3) top_wall = true;}
 
 };
+
+extern Cell *maze[MAZE_SIZE][MAZE_SIZE];
 
 void init_maze();
 

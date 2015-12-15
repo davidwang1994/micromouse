@@ -2,9 +2,9 @@
 // Created by David Wang on 11/22/15.
 //
 
-#ifndef MICROMOUSE_MAIN_H
-#define MICROMOUSE_MAIN_H
+#ifndef __MAIN_H__
+#define __MAIN_H__
 
 #include "../maze/maze.h"
 
-#endif //MICROMOUSE_MAIN_H
+#endif //__MAIN_H__
