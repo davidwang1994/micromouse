@@ -1,7 +1,5 @@
 #include "maze.h"
 
-using namespace std;
-
 Cell *maze[MAZE_SIZE][MAZE_SIZE];
 
 /*
@@ -74,7 +72,7 @@ void update_distances(vector<Cell*> &stack) {
 
 }
 
-void generateRandomWalls() {
+void generate_random_walls() {
     string s;
     srand((unsigned)time(0));
     cout << time(0) << endl;
@@ -129,10 +127,10 @@ void generateRandomWalls() {
  *     0     _______________________
             |     |     |           |
  *          | 256 | 256 | 256   256 |
- *     3    |     |_____|___________|
+ *     3    |     |_____|_____ _____|
             |                 |     |
  *          | 256   256   256 | 256 | (2,3)
- *  i  6    |___________      |_____|
+ *  i  6    |_____ _____      |_____|
             |     |     |           |
  *          | 256 | 256 | 256   256 |
  *     9    |     |_____|      _____|
@@ -144,6 +142,21 @@ void generateRandomWalls() {
  *
  *           y = (MAX_SIZE - 1 - (i / 3)
  *           x = j / 6
+ *
+ *
+ * Ended up with too many bugs trying to implement the top
+ * maze, so went with this design instead.
+ *
+ *           +---+---+---+---+
+ *           |256 256|256 256|
+ *           +---+   +   +   +
+ *           |256 256|256+256|
+ *           +   +   +   +---+
+ *           |256 256|256 256|
+ *           +---+   +   +   +
+ *           |256 256 256 256|
+ *           +---+---+---+---+
+ *
  */
 
 /*
@@ -151,6 +164,65 @@ void generateRandomWalls() {
  */
 void print_maze() {
 
+    // print top wall
+    for (int i = 0; i < MAZE_SIZE; i++) {
+        cout << "+---";
+    }
+    cout << "+\n";
+
+    int rows = 2 * MAZE_SIZE + 1;
+    int y;
+
+    for (int i = 0; i < rows; i++) {
+        y = MAZE_SIZE - 1 - i / 2;
+        for (int j = 0; j < MAZE_SIZE; j++) {
+
+            if (i % 2 != 0 && j != 0) {
+                if (maze[y][j]->top_wall) {
+                    cout << "+---";
+                }
+                else {
+                    cout << "+   ";
+                }
+                if (j == MAZE_SIZE - 1) {
+                    cout << "+";
+                }
+            }
+
+            else {
+                if (j == 0) {
+                    cout << "|";
+                }
+
+                int dist = maze[y][j]->dist;
+                if (dist > 99) {
+                    cout << dist;
+                }
+                else if (dist > 9) {
+                    cout << " " << dist;
+                }
+                else {
+                    cout << " " << dist << " ";
+                }
+
+                if (maze[y][j]->right_wall || j == MAZE_SIZE - 1) {
+                    cout << "|" << endl;
+                }
+                else {
+                    cout << " " << endl;
+                }
+            }
+        }
+        cout << "\n";
+    }
+
+    // print bottom wall
+    for (int i = 0; i < MAZE_SIZE; i++) {
+        cout << "+---";
+    }
+    cout << "+\n";
+
+    /*
     string s;
     int row_items = 3 * MAZE_SIZE + 1;
     int col_items = 6 * MAZE_SIZE + 1;
@@ -174,12 +246,13 @@ void print_maze() {
         for (int j = 0; j < col_items; j++) {
             int y = i;
             if (i > 0) {
-//             y = MAZE_SIZE - 1 - ((i-1) / 3);
-             y = MAZE_SIZE - 1 - (i/3);
+//             y = MAZE_SIZE - 1 - (i/3);
+             y = MAZE_SIZE - 1 - (i/4);
             }
 
             int x;
-            (j < col_items - 1) ? x = j / 6 : x = j / 7;
+//            (j < col_items - 1) ? x = j / 6 : x = j / 7;
+            x = j / 7;
             bool right_wall = false;
             bool top_wall = false;
             if ((j+6) % 6 == 0) {
@@ -192,14 +265,14 @@ void print_maze() {
 
             // Print out the maze borders
             if (j != 0 && j != col_items - 1 && (i == 0 || !right_wall) && (i == 0 || i == row_items - 1)) {
-                s += "_";
+                cout << "_";
             }
             else if (i != 0 && ((right_wall && (j % 6) == 0) || ((j == 0 || j == col_items - 1)))) {
-                s += "|";
+                cout << "|";
             }
 
             else if (top_wall) {
-                s += "___";
+                cout << "___";
                 j += 2;
             }
 
@@ -208,36 +281,37 @@ void print_maze() {
                 if (numberRow && !numberPrinted && scaled_j > 1 && scaled_j < 5) {
                     int dist = maze[y][x]->dist;
                     if (dist > 99) {
-                        s += to_string(dist);
+                        cout << to_string(dist);
                         j += 2;
                         numberPrinted = true;
                     }
                     else if (dist > 9 && scaled_j > 2) {
-                        s += to_string(dist);
+                        cout << to_string(dist);
                         j += 1;
                         numberPrinted = true;
                     }
                     else if (dist < 10 && scaled_j > 2) {
-                        s += to_string(dist);
+                        cout << to_string(dist);
                         numberPrinted = true;
                     }
                     // Handles the bug of not printing a space before a single
                     // or double digit number.
                     else {
-                        s += " ";
+                        cout << " ";
                     }
                 }
                 else {
                     if ((scaled_j) > 4) {
                         numberPrinted = false;
                     }
-                    s += " ";
+                    cout << " ";
                 }
             }
         }
-        s += "\n";
+        cout << "\n";
     }
-    cout << s << endl;
+    cout << endl;
+    */
 }
 
 
