@@ -72,6 +72,18 @@ void update_distances(vector<Cell*> &stack) {
 
 }
 
+/*
+ * Generates random walls for the maze. Call this function
+ * before you want to print out the maze. Mostly used for
+ * testing the print_maze function.
+ *
+ * This function will print out above the maze whether or not there
+ * exists a wall for the top or right. The first space stands for whether
+ * there is a top wall, the second space stands for wether there is a right
+ * wall. (TR, T_, _R, __) The following 4 possibilities stand for a cell having
+ * (top and right, only top, only right, or no walls at all).
+ *
+ */
 void generate_random_walls() {
     string s;
     srand((unsigned)time(0));
@@ -170,14 +182,19 @@ void print_maze() {
     }
     cout << "+\n";
 
-    int rows = 2 * MAZE_SIZE + 1;
+    int rows = MAZE_SIZE + (MAZE_SIZE - 1);
     int y;
 
     for (int i = 0; i < rows; i++) {
-        y = MAZE_SIZE - 1 - i / 2;
+        if (i % 2 == 0) {
+            y = MAZE_SIZE - 1 - i / 2;
+        }
+        else {
+            y = MAZE_SIZE - 1 - (i/2 + 1);
+        }
         for (int j = 0; j < MAZE_SIZE; j++) {
 
-            if (i % 2 != 0 && j != 0) {
+            if (i % 2 != 0) {
                 if (maze[y][j]->top_wall) {
                     cout << "+---";
                 }
@@ -206,10 +223,10 @@ void print_maze() {
                 }
 
                 if (maze[y][j]->right_wall || j == MAZE_SIZE - 1) {
-                    cout << "|" << endl;
+                    cout << "|";
                 }
                 else {
-                    cout << " " << endl;
+                    cout << " ";
                 }
             }
         }
@@ -317,7 +334,7 @@ void print_maze() {
 
 int main() {
     init_maze();
-//    generateRandomWalls();
+    generate_random_walls();
     print_maze();
 }
 

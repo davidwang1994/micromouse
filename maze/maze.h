@@ -16,7 +16,7 @@
 
 using namespace std;
 
-const int MAZE_SIZE = 2;
+const int MAZE_SIZE = 4;
 
 class Cell {
 
@@ -28,17 +28,17 @@ public:
     bool right_wall;
 
     Cell(int y, int x) : y(y), x(x), dist(0), top_wall(false), right_wall(false) {}
-    Cell(int y, int x, int dist) : y(y), x(x), dist(dist), top_wall(false), right_wall(false) {if (y == 1 && x == 1) top_wall= true;}
+    Cell(int y, int x, int dist) : y(y), x(x), dist(dist), top_wall(false), right_wall(false) {}
 
 };
 
 extern Cell *maze[MAZE_SIZE][MAZE_SIZE];
 
-int manhattan_dist(int x1, int x2, int y1, int y2)();
+//int manhattan_dist(int x1, int x2, int y1, int y2)();
+//
+//int min4(int a, int b, int c, int d)();
 
-int min4(int a, int b, int c, int d)();
-
-void update_distances(vector<Cell*> &stack)();
+//void update_distances(vector<Cell*> &stack)();
 
 bool fully_explored();
 
@@ -49,8 +49,6 @@ void clear();
 void load();
 
 void save();
-
-
 
 /***** Test functions *****/
 
