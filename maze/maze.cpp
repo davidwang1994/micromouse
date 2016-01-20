@@ -1,19 +1,20 @@
 #include "maze.h"
 #include "maze_generator.h"
 
+
 Cell *maze[MAZE_SIZE][MAZE_SIZE];
 
 /*
- * Calculates the total number of cells needed to get from a point (x1, y1)
- * to a point (x2, y2).
- */
+* Calculates the total number of cells needed to get from a point (x1, y1)
+* to a point (x2, y2).
+*/
 int manhattan_dist(int x1, int x2, int y1, int y2) {
     return abs(x1 - x2) + abs(y1 - y2);
 }
 
 /*
- * Function that takes the minimum of the four given distances
- */
+* Function that takes the minimum of the four given distances
+*/
 int min4(int a, int b, int c, int d) {
     int min;
     (a < b) ? min = a : min = b;
@@ -28,7 +29,7 @@ int min_open_neighbor(vector<Cell*> cells) {
         if ((*it)->dist < min) {
             min = (*it)->dist;
         }
-        return min;
+    return min;
 }
 
 bool is_center(Cell *cell) {
@@ -39,15 +40,15 @@ bool is_center(Cell *cell) {
     if (manhattan_dist(y, goal1, x, goal1) == 0 ||
         manhattan_dist(y, goal1, x, goal2) == 0 ||
         manhattan_dist(y, goal2, x, goal1) == 0 ||
-            manhattan_dist(y, goal2, x, goal2) == 0) {
+        manhattan_dist(y, goal2, x, goal2) == 0) {
         return true;
     }
     return false;
 }
 
 /*
- * Initializes the maze using the manhattan distances as the starting distances.
- */
+* Initializes the maze using the manhattan distances as the starting distances.
+*/
 void init_maze() {
     int goal1 = MAZE_SIZE / 2;
     int goal2 = (MAZE_SIZE - 1) / 2;
@@ -56,36 +57,38 @@ void init_maze() {
             // Distance of the cell will be the minimum distance to the closest
             // one out of four middle destination cells.
             maze[i][j] = new Cell(i, j, min4(manhattan_dist(i, goal1, j, goal1),
-                              manhattan_dist(i, goal1, j, goal2),
-                              manhattan_dist(i, goal2, j, goal1),
-                              manhattan_dist(i, goal2, j, goal2)));
+                                             manhattan_dist(i, goal1, j, goal2),
+                                             manhattan_dist(i, goal2, j, goal1),
+                                             manhattan_dist(i, goal2, j, goal2)));
         }
     }
 }
 
 /*
- * Initializes Cell * maze from given maze text file (formatted similar to http://www.tcp4me.com/mmr/mazes/)
- * Assumes 33*33 text grid in file and only checks first 32 rows and for - | ' ' at their correct positions
- * A new cell constructor was added for just posiiton and walls.
- */
+* Initializes Cell * maze from given maze text file (formatted similar to http://www.tcp4me.com/mmr/mazes/)
+* Assumes 33*33 text grid in file and only checks first 32 rows and for - | ' ' at their correct positions
+* A new cell constructor was added for just posiiton and walls.
+*/
 void load_maze(string file_name) {
     ifstream file(file_name);
     string top, right;
     int row = 0;
-    while (row < 16){
+    while (row < 16) {
         getline(file, top);
         getline(file, right);
-        for (int col = 0; col < 16; col += 2){
-            maze[row][col] = new Cell(row, col, top[(col << 1) + 1] == '-', right[(col << 1) + 2] == '|');
+        for (int col = 0; col < 16; col++) {
+            maze[row][col] = new Cell(row, col, top[(col * 2) + 1] == '-', right[(col * 2) + 2] == '|');
+            cout << (top[(col * 2) + 1] == '-') << (right[(col * 2) + 2] == '|') << "\n";
         }
+        cout << "\n";
         row++;
     }
 }
 
 /*
- * Initializes the default (blank maze) manhattan distance values into existing maze 
- */
-void init_dist(){
+* Initializes the default (blank maze) manhattan distance values into existing maze
+*/
+void init_dist() {
     int goal1 = MAZE_SIZE / 2;
     int goal2 = (MAZE_SIZE - 1) / 2;
     for (int i = 0; i < MAZE_SIZE; i++) {
@@ -93,9 +96,9 @@ void init_dist(){
             // Distance of the cell will be the minimum distance to the closest
             // one out of four middle destination cells.
             maze[i][j]->dist = min4(manhattan_dist(i, goal1, j, goal1),
-                              manhattan_dist(i, goal1, j, goal2),
-                              manhattan_dist(i, goal2, j, goal1),
-                              manhattan_dist(i, goal2, j, goal2));
+                                    manhattan_dist(i, goal1, j, goal2),
+                                    manhattan_dist(i, goal2, j, goal1),
+                                    manhattan_dist(i, goal2, j, goal2));
         }
     }
 }
@@ -105,8 +108,8 @@ void add_cell_to_update(vector<Cell*> &stack, Cell *cell) {
 }
 
 /*
- * Function to update the distances of the cells
- */
+* Function to update the distances of the cells
+*/
 void update_distances(vector<Cell*> &stack) {
     Cell *current;
     vector<Cell *> open_neighbors;
@@ -137,14 +140,14 @@ void update_distances(vector<Cell*> &stack) {
         // check bottom neighbor
         if (y > 0) {
             neighbors.push_back(maze[y - 1][x]);
-            if (maze[y-1][x]->top_wall) {
+            if (maze[y - 1][x]->top_wall) {
                 open_neighbors.push_back(maze[y - 1][x]);
             }
         }
         // check left neighbor
         if (x > 0) {
             neighbors.push_back(maze[y][x - 1]);
-            if (maze[y][x-1]->right_wall) {
+            if (maze[y][x - 1]->right_wall) {
                 open_neighbors.push_back(maze[y][x - 1]);
             }
         }
@@ -165,29 +168,29 @@ void update_distances(vector<Cell*> &stack) {
 }
 
 /*
- * Generates random walls for the maze. Call this function
- * before you want to print out the maze. Mostly used for
- * testing the print_maze function.
- *
- * This function will print out above the maze whether or not there
- * exists a wall for the top or right. The first space stands for whether
- * there is a top wall, the second space stands for wether there is a right
- * wall. (TR, T_, _R, __) The following 4 possibilities stand for a cell having
- * (top and right, only top, only right, or no walls at all).
- *
- */
+* Generates random walls for the maze. Call this function
+* before you want to print out the maze. Mostly used for
+* testing the print_maze function.
+*
+* This function will print out above the maze whether or not there
+* exists a wall for the top or right. The first space stands for whether
+* there is a top wall, the second space stands for wether there is a right
+* wall. (TR, T_, _R, __) The following 4 possibilities stand for a cell having
+* (top and right, only top, only right, or no walls at all).
+*
+*/
 void generate_random_walls() {
     string s;
     srand((unsigned)time(0));
     cout << time(0) << endl;
     int numCells = MAZE_SIZE * MAZE_SIZE;
-    int numWalls = rand() % (numCells/4) + (numCells * 3 / 4);
+    int numWalls = rand() % (numCells / 4) + (numCells * 3 / 4);
     cout << rand() << endl;
     cout << numWalls << endl;
 
     for (int i = 0; i < MAZE_SIZE; i++) {
         for (int j = 0; j < MAZE_SIZE; j++) {
-            int y = MAZE_SIZE -  1  - i;
+            int y = MAZE_SIZE - 1 - i;
             int type = rand() % 4;
             if (numWalls > 0) {
                 if (type == 1) {
@@ -220,52 +223,52 @@ void generate_random_walls() {
 }
 
 /*
- * How the maze should look like with a
- * 4 x 4 maze example
- *
- *                      j
- *
- *          0     6     12    18    24
- *
- *           (3,0) (3,1)
- *     0     _______________________
-            |     |     |           |
- *          | 256 | 256 | 256   256 |
- *     3    |     |_____|_____ _____|
-            |                 |     |
- *          | 256   256   256 | 256 | (2,3)
- *  i  6    |_____ _____      |_____|
-            |     |     |           |
- *          | 256 | 256 | 256   256 |
- *     9    |     |_____|      _____|
-            |                 |     |
- *          | 256   256   256 | 256 |
- *     12   |_________________|_____|
- *
- *           (0,0) (0,1)
- *
- *           y = (MAX_SIZE - 1 - (i / 3)
- *           x = j / 6
- *
- *
- * Ended up with too many bugs trying to implement the top
- * maze, so went with this design instead.
- *
- *           +---+---+---+---+
- *           |256 256|256 256|
- *           +---+   +   +   +
- *           |256 256|256+256|
- *           +   +   +   +---+
- *           |256 256|256 256|
- *           +---+   +   +   +
- *           |256 256 256 256|
- *           +---+---+---+---+
- *
- */
+* How the maze should look like with a
+* 4 x 4 maze example
+*
+*                      j
+*
+*          0     6     12    18    24
+*
+*           (3,0) (3,1)
+*     0     _______________________
+|     |     |           |
+*          | 256 | 256 | 256   256 |
+*     3    |     |_____|_____ _____|
+|                 |     |
+*          | 256   256   256 | 256 | (2,3)
+*  i  6    |_____ _____      |_____|
+|     |     |           |
+*          | 256 | 256 | 256   256 |
+*     9    |     |_____|      _____|
+|                 |     |
+*          | 256   256   256 | 256 |
+*     12   |_________________|_____|
+*
+*           (0,0) (0,1)
+*
+*           y = (MAX_SIZE - 1 - (i / 3)
+*           x = j / 6
+*
+*
+* Ended up with too many bugs trying to implement the top
+* maze, so went with this design instead.
+*
+*           +---+---+---+---+
+*           |256 256|256 256|
+*           +---+   +   +   +
+*           |256 256|256+256|
+*           +   +   +   +---+
+*           |256 256|256 256|
+*           +---+   +   +   +
+*           |256 256 256 256|
+*           +---+---+---+---+
+*
+*/
 
 /*
- * Function to print out an ascii representation of the maze.
- */
+* Function to print out an ascii representation of the maze.
+*/
 void print_maze() {
 
     // print top wall
@@ -282,7 +285,7 @@ void print_maze() {
             y = MAZE_SIZE - 1 - i / 2;
         }
         else {
-            y = MAZE_SIZE - 1 - (i/2 + 1);
+            y = MAZE_SIZE - 1 - (i / 2 + 1);
         }
         for (int j = 0; j < MAZE_SIZE; j++) {
 
@@ -304,7 +307,8 @@ void print_maze() {
                 }
 
                 int dist = maze[y][j]->dist;
-                if (dist > 99) {
+                cout << "   ";
+                /*if (dist > 99) {
                     cout << dist;
                 }
                 else if (dist > 9) {
@@ -312,7 +316,7 @@ void print_maze() {
                 }
                 else {
                     cout << " " << dist << " ";
-                }
+                }*/
 
                 if (maze[y][j]->right_wall || j == MAZE_SIZE - 1) {
                     cout << "|";
@@ -334,23 +338,30 @@ void print_maze() {
 
 
 int main() {
-    init_maze();
-//    generate_random_walls();
+    //    init_maze();
+    ////    generate_random_walls();
+    //    print_maze();
+    //    vector<Cell*> cells;
+    //    cells.push_back(maze[0][0]);
+    //    add_cell_to_update(cells, maze[7][0]);
+    //    update_distances(cells);
+
+    load_maze("2008japan.maze");
+    //generateOnePath(maze);
     print_maze();
-    vector<Cell*> cells;
-    cells.push_back(maze[0][0]);
-    add_cell_to_update(cells, maze[7][0]);
-    update_distances(cells);
-    print_maze();
+
+    getchar();
 }
 
 /*
 void floodfill(int[][] maze, int x, int y) {
-    if (maze[x][y] != visited) {
-        maze[x][y] = true;
-        if (x < 8 && y < 8) {
-            floodfill(maze, x+1, y+1, true)
-        }
-    }
+if (maze[x][y] != visited) {
+maze[x][y] = true;
+if (x < 8 && y < 8) {
+floodfill(maze, x+1, y+1, true)
+}
+}
 }
 */
+
+
