@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "maze.h"
- 
+#include "maze_generator.h"
+
 // a structure to represent a weighted edge in graph
 struct Edge
 {
@@ -86,7 +87,7 @@ int myComp(const void* a, const void* b)
 }
  
 // The main function to construct MST using Kruskal's algorithm
-void KruskalMST(struct Graph* graph, Cell *maze)
+void KruskalMST(struct Graph* graph, Cell ***maze)
 {
     int V = graph->V;
     struct Edge result[V];  // Tnis will store the resultant MST
@@ -142,13 +143,13 @@ void KruskalMST(struct Graph* graph, Cell *maze)
 	int src, row, col;
 	for (int i = 0; i < e; i++){
 		src = result[i].src;
-		row = 15 - (src / 16)
+		row = 15 - (src / 16);
 		col = src % 16;
 		if (result[i].dest - src == 1){ //Horizontal cells
-			maze[row][col].right_wall = false;
+			maze[row][col]->right_wall = false;
 		}
 		else { //Vertical cells
-			maze[row][col].top_wall = false;
+			maze[row][col]->top_wall = false;
 		}
 	}
 	
@@ -159,7 +160,7 @@ void KruskalMST(struct Graph* graph, Cell *maze)
  * Generates the 16 by 16 maze, storing into given 16*16 array of Cells
  * Only one path is actually possible
  */
-void generateOnePath(Cell *maze)
+void generateOnePath(Cell ***maze)
 {
 
     int V = 256;  // Number of vertices in graph
@@ -201,8 +202,8 @@ void generateOnePath(Cell *maze)
 	edge[367].weight = 99999; edge[368].weight = 0; edge[369].weight = 99999;
 	edge[352].weight = 99999; edge[353].weight = 0; edge[354].weight = 99999;
 	//Randomly open one of middle walls
-	int opening[8] = {127, 129, 112, 114, 367, 369, 352, 354};
-	edge[opening[rand() % 7]].weight = 0;
+
+	edge[middleWalls[rand() % 7]].weight = 0;
 	
 	
 	//Initializes all walls in maze
@@ -213,7 +214,36 @@ void generateOnePath(Cell *maze)
 	}
 	
 	//Find the walls to open and opens them
-    KruskalMST(graph);
- 
-    return 0;
+    KruskalMST(graph, maze);
+}
+
+void generateMoreThanOnePath(Cell ***maze, int wallsToKill){
+    generateOnePath(maze);
+    tearDownWalls(maze, wallsToKill);
+}
+
+void tearDownWalls(Cell ***maze, int wallsToKill){
+    int num;
+    Cell * c;
+    while (wallsToKill > 0){
+        num = rand() % 480;
+        if (num == 0 || num == 240 || num == 127|| num == 129|| num == 112|| num == 114|| num == 367|| num == 369|| num == 352|| num == 354){
+            continue;//Middle walls or walls of bottom left cell
+        }
+        if (num > 240){ //Top walls
+            num-=240;
+            c = maze[15 - num / 16][num % 16];
+            if (c -> top_wall){
+                c -> top_wall = true;
+                wallsToKill--;
+            }
+        }
+        else { //right walls
+            c = maze[15 - num / 15][num % 15];
+            if (c -> right_wall){
+                c -> right_wall = false;
+                wallsToKill--;
+            }
+        }
+    }
 }

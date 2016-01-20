@@ -69,12 +69,12 @@ void init_maze() {
  * A new cell constructor was added for just posiiton and walls.
  */
 void load_maze(string file_name) {
-    ifstream file(name);
+    ifstream file(file_name);
     string top, right;
     int row = 0;
     while (row < 16){
         getline(file, top);
-        getLine(file, right)
+        getline(file, right);
         for (int col = 0; col < 16; col += 2){
             maze[row][col] = new Cell(row, col, top[(col << 1) + 1] == '-', right[(col << 1) + 2] == '|');
         }
@@ -92,20 +92,12 @@ void init_dist(){
         for (int j = 0; j < MAZE_SIZE; j++) {
             // Distance of the cell will be the minimum distance to the closest
             // one out of four middle destination cells.
-            maze[i][j].dist = min4(manhattan_dist(i, goal1, j, goal1),
+            maze[i][j]->dist = min4(manhattan_dist(i, goal1, j, goal1),
                               manhattan_dist(i, goal1, j, goal2),
                               manhattan_dist(i, goal2, j, goal1),
-                              manhattan_dist(i, goal2, j, goal2)));
+                              manhattan_dist(i, goal2, j, goal2));
         }
     }
-}
-
-/*
- * Generates a random maze, by assigning random weights to most edges and creating a MST using prim's algorithm
- * 
- */
-void generate_random_maze(){
-    
 }
 
 void add_cell_to_update(vector<Cell*> &stack, Cell *cell) {
