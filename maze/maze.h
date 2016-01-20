@@ -16,7 +16,7 @@
 
 using namespace std;
 
-const int MAZE_SIZE = 4;
+const int MAZE_SIZE = 16;
 
 class Cell {
 
@@ -28,7 +28,7 @@ public:
     bool right_wall;
 
     Cell(int y, int x) : y(y), x(x), dist(0), top_wall(false), right_wall(false) {}
-    Cell(int y, int x, int dist) : y(y), x(x), dist(dist), top_wall(false), right_wall(false) {}
+    Cell(int y, int x, int dist) : y(y), x(x), dist(dist), top_wall(false), right_wall(false) {if (y < 8 && x == 0) right_wall=true;}
 
 };
 

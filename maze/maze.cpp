@@ -21,6 +21,29 @@ int min4(int a, int b, int c, int d) {
     return min;
 }
 
+int min_open_neighbor(vector<Cell*> cells) {
+    int min = INT_MAX;
+    for (vector<Cell*>::iterator it = cells.begin(); it != cells.end(); it++)
+        if ((*it)->dist < min) {
+            min = (*it)->dist;
+        }
+        return min;
+}
+
+bool is_center(Cell *cell) {
+    int x = cell->x;
+    int y = cell->y;
+    int goal1 = MAZE_SIZE / 2;
+    int goal2 = (MAZE_SIZE - 1) / 2;
+    if (manhattan_dist(y, goal1, x, goal1) == 0 ||
+        manhattan_dist(y, goal1, x, goal2) == 0 ||
+        manhattan_dist(y, goal2, x, goal1) == 0 ||
+            manhattan_dist(y, goal2, x, goal2) == 0) {
+        return true;
+    }
+    return false;
+}
+
 /*
  * Initializes the maze using the manhattan distances as the starting distances.
  */
@@ -39,37 +62,68 @@ void init_maze() {
     }
 }
 
+void add_cell_to_update(vector<Cell*> &stack, Cell *cell) {
+    stack.push_back(cell);
+}
+
 /*
  * Function to update the distances of the cells
  */
 void update_distances(vector<Cell*> &stack) {
-    Cell *current, *top, *right, *bottom, *left;
+    Cell *current;
+    vector<Cell *> open_neighbors;
+    vector<Cell*> neighbors;
+
     int neighbor_dist[4];
     int x, y;
     int min;
     while (!stack.empty()) {
         current = stack.back();
+        cout << "stack not empty" << endl;
+        cout << "current cell: (" << current->x << "," << current->y << ")" << endl;
         stack.pop_back();
         x = current->x;
         y = current->y;
-        if (y < MAZE_SIZE - 1)
-            top = maze[x][y+1];
-        if (x < MAZE_SIZE - 1)
-            right = maze[x+1][y];
-        if (y > 0)
-            bottom = maze[x][y-1];
-        if (x > 0)
-            left = maze[x-1][y];
-        min = min4(top->dist, right->dist, bottom->dist, left->dist);
+        // check top neighbor
+        if (y < MAZE_SIZE - 1) {
+            neighbors.push_back(maze[y + 1][x]);
+            if (!current->top_wall)
+                open_neighbors.push_back(maze[y + 1][x]);
+        }
+        // check right neighbor
+        if (x < MAZE_SIZE - 1) {
+            neighbors.push_back(maze[y][x + 1]);
+            if (!current->right_wall)
+                open_neighbors.push_back(maze[y][x + 1]);
+        }
+        // check bottom neighbor
+        if (y > 0) {
+            neighbors.push_back(maze[y - 1][x]);
+            if (maze[y-1][x]->top_wall) {
+                open_neighbors.push_back(maze[y - 1][x]);
+            }
+        }
+        // check left neighbor
+        if (x > 0) {
+            neighbors.push_back(maze[y][x - 1]);
+            if (maze[y][x-1]->right_wall) {
+                open_neighbors.push_back(maze[y][x - 1]);
+            }
+        }
+        min = min_open_neighbor(open_neighbors);
+        open_neighbors.clear();
         if (current->dist - 1 != min) {
+            cout << "min: " << min << endl;
             current->dist = min + 1;
-            stack.push_back(top);
-            stack.push_back(right);
-            stack.push_back(bottom);
-            stack.push_back(left);
+            for (vector<Cell *>::iterator it = neighbors.begin(); it != neighbors.end(); it++) {
+                if (!is_center(*it)) {
+                    stack.push_back(*it);
+                    cout << "pushed cell: (" << (*it)->x << "," << (*it)->y << ")" << endl;
+                }
+            }
+            neighbors.clear();
         }
     }
-
 }
 
 /*
@@ -238,103 +292,17 @@ void print_maze() {
         cout << "+---";
     }
     cout << "+\n";
-
-    /*
-    string s;
-    int row_items = 3 * MAZE_SIZE + 1;
-    int col_items = 6 * MAZE_SIZE + 1;
-    bool numberRow = false;
-    bool numberPrinted = false;
-    int prevNumRow = 2;
-
-    for (int i = 0; i < row_items; i++) {
-
-
-        // numberRow is set to true when i is equal to a row number that we
-        // want to place the cells distance in
-        if (i == prevNumRow) {
-            numberRow = true;
-            prevNumRow += 3;
-        }
-        else {
-            numberRow = false;
-        }
-
-        for (int j = 0; j < col_items; j++) {
-            int y = i;
-            if (i > 0) {
-//             y = MAZE_SIZE - 1 - (i/3);
-             y = MAZE_SIZE - 1 - (i/4);
-            }
-
-            int x;
-//            (j < col_items - 1) ? x = j / 6 : x = j / 7;
-            x = j / 7;
-            bool right_wall = false;
-            bool top_wall = false;
-            if ((j+6) % 6 == 0) {
-                 right_wall = maze[y][x]->right_wall;
-            }
-            if ((i+3) % 3 == 0) {
-                top_wall = maze[y][x]->top_wall;
-            }
-
-
-            // Print out the maze borders
-            if (j != 0 && j != col_items - 1 && (i == 0 || !right_wall) && (i == 0 || i == row_items - 1)) {
-                cout << "_";
-            }
-            else if (i != 0 && ((right_wall && (j % 6) == 0) || ((j == 0 || j == col_items - 1)))) {
-                cout << "|";
-            }
-
-            else if (top_wall) {
-                cout << "___";
-                j += 2;
-            }
-
-            else {
-                int scaled_j = j % 6;
-                if (numberRow && !numberPrinted && scaled_j > 1 && scaled_j < 5) {
-                    int dist = maze[y][x]->dist;
-                    if (dist > 99) {
-                        cout << to_string(dist);
-                        j += 2;
-                        numberPrinted = true;
-                    }
-                    else if (dist > 9 && scaled_j > 2) {
-                        cout << to_string(dist);
-                        j += 1;
-                        numberPrinted = true;
-                    }
-                    else if (dist < 10 && scaled_j > 2) {
-                        cout << to_string(dist);
-                        numberPrinted = true;
-                    }
-                    // Handles the bug of not printing a space before a single
-                    // or double digit number.
-                    else {
-                        cout << " ";
-                    }
-                }
-                else {
-                    if ((scaled_j) > 4) {
-                        numberPrinted = false;
-                    }
-                    cout << " ";
-                }
-            }
-        }
-        cout << "\n";
-    }
-    cout << endl;
-    */
 }
 
 
 int main() {
     init_maze();
-    generate_random_walls();
+//    generate_random_walls();
+    print_maze();
+    vector<Cell*> cells;
+    cells.push_back(maze[0][0]);
+    add_cell_to_update(cells, maze[7][0]);
+    update_distances(cells);
     print_maze();
 }
 
