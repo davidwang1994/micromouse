@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -29,7 +30,7 @@ public:
 
     Cell(int y, int x) : y(y), x(x), dist(0), top_wall(false), right_wall(false) {}
     Cell(int y, int x, int dist) : y(y), x(x), dist(dist), top_wall(false), right_wall(false) {if (y < 8 && x == 0) right_wall=true;}
-
+    Cell(int y, int x, bool top_wall, bool right_wall) : y(y), x(x), top_wall(top_wall), right_wall(right_wall) {}
 };
 
 extern Cell *maze[MAZE_SIZE][MAZE_SIZE];

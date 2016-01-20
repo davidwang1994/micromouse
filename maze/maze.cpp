@@ -1,4 +1,5 @@
 #include "maze.h"
+#include "maze_generator.h"
 
 Cell *maze[MAZE_SIZE][MAZE_SIZE];
 
@@ -60,6 +61,51 @@ void init_maze() {
                               manhattan_dist(i, goal2, j, goal2)));
         }
     }
+}
+
+/*
+ * Initializes Cell * maze from given maze text file (formatted similar to http://www.tcp4me.com/mmr/mazes/)
+ * Assumes 33*33 text grid in file and only checks first 32 rows and for - | ' ' at their correct positions
+ * A new cell constructor was added for just posiiton and walls.
+ */
+void load_maze(string file_name) {
+    ifstream file(name);
+    string top, right;
+    int row = 0;
+    while (row < 16){
+        getline(file, top);
+        getLine(file, right)
+        for (int col = 0; col < 16; col += 2){
+            maze[row][col] = new Cell(row, col, top[(col << 1) + 1] == '-', right[(col << 1) + 2] == '|');
+        }
+        row++;
+    }
+}
+
+/*
+ * Initializes the default (blank maze) manhattan distance values into existing maze 
+ */
+void init_dist(){
+    int goal1 = MAZE_SIZE / 2;
+    int goal2 = (MAZE_SIZE - 1) / 2;
+    for (int i = 0; i < MAZE_SIZE; i++) {
+        for (int j = 0; j < MAZE_SIZE; j++) {
+            // Distance of the cell will be the minimum distance to the closest
+            // one out of four middle destination cells.
+            maze[i][j].dist = min4(manhattan_dist(i, goal1, j, goal1),
+                              manhattan_dist(i, goal1, j, goal2),
+                              manhattan_dist(i, goal2, j, goal1),
+                              manhattan_dist(i, goal2, j, goal2)));
+        }
+    }
+}
+
+/*
+ * Generates a random maze, by assigning random weights to most edges and creating a MST using prim's algorithm
+ * 
+ */
+void generate_random_maze(){
+    
 }
 
 void add_cell_to_update(vector<Cell*> &stack, Cell *cell) {
