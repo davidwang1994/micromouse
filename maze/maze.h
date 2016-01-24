@@ -25,7 +25,8 @@ class Cell {
 public:
     int y;
     int x;
-    unsigned char dist;
+    int dist;
+//    unsigned char dist;
     bool top_wall;
     bool right_wall;
 
@@ -35,6 +36,7 @@ public:
 };
 
 extern Cell *maze[MAZE_SIZE][MAZE_SIZE];
+extern Cell *mazeIn[MAZE_SIZE][MAZE_SIZE];
 
 //int manhattan_dist(int x1, int x2, int y1, int y2)();
 //
@@ -52,6 +54,9 @@ void load();
 
 void save();
 
+void serialize(int rows, int cols);
+void deserialize();
+void print_debug_maze();
 /***** Test functions *****/
 
 void generate_random_walls();

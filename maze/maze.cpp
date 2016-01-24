@@ -3,6 +3,7 @@
 
 
 Cell *maze[MAZE_SIZE][MAZE_SIZE];
+Cell *mazeIn[MAZE_SIZE][MAZE_SIZE];
 
 /*
 * Calculates the total number of cells needed to get from a point (x1, y1)
@@ -60,8 +61,23 @@ void init_maze() {
                                              manhattan_dist(i, goal1, j, goal2),
                                              manhattan_dist(i, goal2, j, goal1),
                                              manhattan_dist(i, goal2, j, goal2)));
+  /**          cout <<"store: " << min4(manhattan_dist(i, goal1, j, goal1),
+                                             manhattan_dist(i, goal1, j, goal2),
+                                             manhattan_dist(i, goal2, j, goal1),
+                                             manhattan_dist(i, goal2, j, goal2)) <<
+                                             " in ( " << i <<" , "<< j << " )......."<<endl;
+            cout<< " ( " << i << " , " << j << " ):  " << maze[i][j]->dist << endl;
+**/
         }
     }
+
+//    for(int i = 0; i < MAZE_SIZE; i++){
+//        for(int j = 0; j < MAZE_SIZE; j++){
+//            cout<< " ( " << i << " , " << j << " ):  " << maze[i][j]->dist << endl;
+//        }
+//    }
+
+    cout << "size of the matrix is: "<< sizeof(maze) << endl;
 }
 
 /*
@@ -83,25 +99,123 @@ void load_maze(string file_name) {
         cout << "\n";
         row++;
     }
+
+    int goal1 = MAZE_SIZE / 2;
+    int goal2 = (MAZE_SIZE - 1) / 2;
+    for (int i = 0; i < MAZE_SIZE; i++) {
+      for (int j = 0; j < MAZE_SIZE; j++) {
+        // Distance of the cell will be the minimum distance to the closest
+        // one out of four middle destination cells.
+        maze[i][j]->dist = min4(manhattan_dist(i, goal1, j, goal1),
+                                manhattan_dist(i, goal1, j, goal2),
+                                manhattan_dist(i, goal2, j, goal1),
+                                manhattan_dist(i, goal2, j, goal2));
+      }
+    }
 }
 
-/*
-* Initializes the default (blank maze) manhattan distance values into existing maze
-*/
-void init_dist() {
+/**
+* Get the currently constructed maze and write to a binary file
+**/
+void output_maze(){
+    // output the maze to a binary file
+    ofstream outfile("maze_out", ofstream::binary);
+    for(int i = 0; i < MAZE_SIZE; i++){
+        for(int j = 0; j < MAZE_SIZE; j++){
+            outfile.write( (char*)&maze[i][j], sizeof(int) );
+            outfile << maze[i][j];
+        }
+    }
+    outfile.close();
+    cout << "done..." << endl;
+    cout << "list the dists of each cell below.... " << endl;
+    // printing out the maze and dists to the console
+//    for(int i = 0; i < MAZE_SIZE; i++){
+  //      for(int j = 0; j < MAZE_SIZE; j++){
+//            cout<< " ( " << i << " , " << j << " ):  " << maze[i][j]->dist << endl;
+//        }
+//    }
+}
+
+void serialize(int rows, int cols) {
+    ofstream outfile;
+    outfile.open("maze_out", ofstream::binary);
+//    outfile << rows << " ";
+//    outfile << cols << " ";
+    for (int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+         //   outfile << maze[i][j] << " ";
+            outfile.write(reinterpret_cast<char*> (&maze[i][j]), sizeof(int));
+        }
+    }
+    outfile.close();
+
+
+    /** Outputting the maze structure inti a file
+    * using the fopen function
+    **/
+  //  FILE* pFile = fopen("maze_out", "wb");
+  //  fwrite(maze, sizeof(maze), 1, pFile);
+  //  fclose(pFile);
+}
+
+void deserialize() {
+    int rows = 16;
+    int cols = 16;
     int goal1 = MAZE_SIZE / 2;
     int goal2 = (MAZE_SIZE - 1) / 2;
     for (int i = 0; i < MAZE_SIZE; i++) {
         for (int j = 0; j < MAZE_SIZE; j++) {
             // Distance of the cell will be the minimum distance to the closest
             // one out of four middle destination cells.
-            maze[i][j]->dist = min4(manhattan_dist(i, goal1, j, goal1),
-                                    manhattan_dist(i, goal1, j, goal2),
-                                    manhattan_dist(i, goal2, j, goal1),
-                                    manhattan_dist(i, goal2, j, goal2));
+            mazeIn[i][j] = new Cell(i, j, min4(manhattan_dist(i, goal1, j, goal1),
+                                             manhattan_dist(i, goal1, j, goal2),
+                                             manhattan_dist(i, goal2, j, goal1),
+                                             manhattan_dist(i, goal2, j, goal2)));
+
+
         }
     }
+    ifstream inFile;
+    inFile.open("maze_out", ios::in | ios::binary);
+    cout << "This line entered... " << endl;
+    for (int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+            inFile.read (reinterpret_cast<char*> (&mazeIn[i][j]), sizeof(int));
+        }
+    }
+    inFile.close();
+
+  //  FILE* pFile = fopen("maze_out", "rb");
+  //  fread(mazeIn, sizeof(mazeIn), 1, pFile);
+  //  fclose(pFile);
 }
+
+/**
+* Read in the maze data from a previously stored binary file
+**/
+
+
+
+
+/*
+* Initializes the default (blank maze) manhattan distance values into existing maze
+* Given a 5 * 5 maze, it would look like:
+*    _________________________
+*   | 4  | 3  | 2  | 3  | 4  |
+*   |____|____|____|____|____|
+*   | 3  | 2  | 1  | 2  | 2  |
+*   |____|____|____|____|____|
+*   | 2  | 1  | 0  | 1  | 3  |
+*   |____|____|____|____|____|
+*   | 3  | 2  | 1  | 2  | 3  |
+*   |____|____|____|____|____|
+*   | 4  | 3  | 2  | 3  | 4  |
+*   |____|____|____|____|____|
+*
+* Each cell stores its distance from the target cell (In this case, (2,2)  )
+*/
+
 
 void add_cell_to_update(vector<Cell*> &stack, Cell *cell) {
     stack.push_back(cell);
@@ -307,8 +421,8 @@ void print_maze() {
                 }
 
                 int dist = maze[y][j]->dist;
-                cout << "   ";
-                /*if (dist > 99) {
+          //      cout << "   ";
+                if (dist > 99) {
                     cout << dist;
                 }
                 else if (dist > 9) {
@@ -316,7 +430,7 @@ void print_maze() {
                 }
                 else {
                     cout << " " << dist << " ";
-                }*/
+                }
 
                 if (maze[y][j]->right_wall || j == MAZE_SIZE - 1) {
                     cout << "|";
@@ -336,32 +450,94 @@ void print_maze() {
     cout << "+\n";
 }
 
+void print_debug_maze() {
+
+    // print top wall
+    for (int i = 0; i < MAZE_SIZE; i++) {
+        cout << "+---";
+    }
+    cout << "+\n";
+
+    int rows = MAZE_SIZE + (MAZE_SIZE - 1);
+    int y;
+
+    for (int i = 0; i < rows; i++) {
+        if (i % 2 == 0) {
+            y = MAZE_SIZE - 1 - i / 2;
+        }
+        else {
+            y = MAZE_SIZE - 1 - (i / 2 + 1);
+        }
+        for (int j = 0; j < MAZE_SIZE; j++) {
+
+            if (i % 2 != 0) {
+                if (mazeIn[y][j]->top_wall) {
+                    cout << "+---";
+                }
+                else {
+                    cout << "+   ";
+                }
+                if (j == MAZE_SIZE - 1) {
+                    cout << "+";
+                }
+            }
+
+            else {
+                if (j == 0) {
+                    cout << "|";
+                }
+
+                int dist = mazeIn[y][j]->dist;
+                if (dist > 99) {
+                    cout << dist;
+                }
+                else if (dist > 9) {
+                    cout << " " << dist;
+                }
+                else {
+                    cout << " " << dist << " ";
+                }
+
+                if (mazeIn[y][j]->right_wall || j == MAZE_SIZE - 1) {
+                    cout << "|";
+                }
+                else {
+                    cout << " ";
+                }
+            }
+        }
+        cout << "\n";
+    }
+
+    // print bottom wall
+    for (int i = 0; i < MAZE_SIZE; i++) {
+        cout << "+---";
+    }
+    cout << "+\n";
+}
+
+
+
 
 int main() {
-    //    init_maze();
+        init_maze();
+    //    output_maze();
+
     ////    generate_random_walls();
-    //    print_maze();
+        print_maze();
     //    vector<Cell*> cells;
     //    cells.push_back(maze[0][0]);
     //    add_cell_to_update(cells, maze[7][0]);
     //    update_distances(cells);
 
-    load_maze("2008japan.maze");
+  //  load_maze("2008japan.maze");
+        load_maze("2011robotic");
+
+        serialize(16, 16);
+        deserialize();
+        cout << "     " << endl;
     //generateOnePath(maze);
-    print_maze();
+        print_debug_maze();
 
     getchar();
 }
-
-/*
-void floodfill(int[][] maze, int x, int y) {
-if (maze[x][y] != visited) {
-maze[x][y] = true;
-if (x < 8 && y < 8) {
-floodfill(maze, x+1, y+1, true)
-}
-}
-}
-*/
-
-
