@@ -9,23 +9,23 @@ Cell *mazeIn[MAZE_SIZE][MAZE_SIZE];
 * Calculates the total number of cells needed to get from a point (x1, y1)
 * to a point (x2, y2).
 */
-int manhattan_dist(int x1, int x2, int y1, int y2) {
+unsigned char manhattan_dist(unsigned char x1, unsigned char x2, unsigned char y1, unsigned char y2) {
     return abs(x1 - x2) + abs(y1 - y2);
 }
 
 /*
 * Function that takes the minimum of the four given distances
 */
-int min4(int a, int b, int c, int d) {
-    int min;
+unsigned char min4(unsigned char a, unsigned char b, unsigned char c, unsigned char d) {
+    unsigned char min;
     (a < b) ? min = a : min = b;
     if (c < min) min = c;
     if (d < min) min = d;
     return min;
 }
 
-int min_open_neighbor(vector<Cell*> cells) {
-    int min = INT_MAX;
+unsigned char min_open_neighbor(vector<Cell*> cells) {
+    unsigned char min = CHAR_MAX;
     for (vector<Cell*>::iterator it = cells.begin(); it != cells.end(); it++)
         if ((*it)->dist < min) {
             min = (*it)->dist;
@@ -34,10 +34,10 @@ int min_open_neighbor(vector<Cell*> cells) {
 }
 
 bool is_center(Cell *cell) {
-    int x = cell->x;
-    int y = cell->y;
-    int goal1 = MAZE_SIZE / 2;
-    int goal2 = (MAZE_SIZE - 1) / 2;
+    unsigned char x = cell->x;
+    unsigned char y = cell->y;
+    unsigned char goal1 = MAZE_SIZE / 2;
+    unsigned char goal2 = (MAZE_SIZE - 1) / 2;
     if (manhattan_dist(y, goal1, x, goal1) == 0 ||
         manhattan_dist(y, goal1, x, goal2) == 0 ||
         manhattan_dist(y, goal2, x, goal1) == 0 ||
@@ -51,8 +51,8 @@ bool is_center(Cell *cell) {
 * Initializes the maze using the manhattan distances as the starting distances.
 */
 void init_maze() {
-    int goal1 = MAZE_SIZE / 2;
-    int goal2 = (MAZE_SIZE - 1) / 2;
+    unsigned char goal1 = MAZE_SIZE / 2;
+    unsigned char goal2 = (MAZE_SIZE - 1) / 2;
     for (int i = 0; i < MAZE_SIZE; i++) {
         for (int j = 0; j < MAZE_SIZE; j++) {
             // Distance of the cell will be the minimum distance to the closest
@@ -94,7 +94,7 @@ void load_maze(string file_name) {
         getline(file, right);
         for (int col = 0; col < 16; col++) {
             maze[row][col] = new Cell(row, col, top[(col * 2) + 1] == '-', right[(col * 2) + 2] == '|');
-            cout << (top[(col * 2) + 1] == '-') << (right[(col * 2) + 2] == '|') << "\n";
+//            cout << (top[(col * 2) + 1] == '-') << (right[(col * 2) + 2] == '|') << "\n";
         }
         cout << "\n";
         row++;
@@ -234,8 +234,8 @@ void update_distances(vector<Cell*> &stack) {
     int min;
     while (!stack.empty()) {
         current = stack.back();
-        cout << "stack not empty" << endl;
-        cout << "current cell: (" << current->x << "," << current->y << ")" << endl;
+//        cout << "stack not empty" << endl;
+//        cout << "current cell: (" << current->x << "," << current->y << ")" << endl;
         stack.pop_back();
         x = current->x;
         y = current->y;
@@ -268,16 +268,54 @@ void update_distances(vector<Cell*> &stack) {
         min = min_open_neighbor(open_neighbors);
         open_neighbors.clear();
         if (current->dist - 1 != min) {
-            cout << "min: " << min << endl;
+//            cout << "min: " << min << endl;
             current->dist = min + 1;
             for (vector<Cell *>::iterator it = neighbors.begin(); it != neighbors.end(); it++) {
                 if (!is_center(*it)) {
                     stack.push_back(*it);
-                    cout << "pushed cell: (" << (*it)->x << "," << (*it)->y << ")" << endl;
+//                    cout << "pushed cell: (" << (*it)->x << "," << (*it)->y << ")" << endl;
                 }
             }
             neighbors.clear();
         }
+    }
+}
+
+bool fully_explored() {
+   for (int y = 0; y < MAZE_SIZE; y++) {
+       for (int x = 0; x < MAZE_SIZE; x++) {
+           if (maze[y][x] == false) {
+               return false;
+           }
+       }
+   }
+    return true;
+}
+
+void explore(vector<Cell*> &stack, int y, int x) {
+    cout << "before check x: " << x << " y: " << y << endl;
+    if (maze[y][x]->visited) {
+        cout << "after check x: " << x << " y: " << y << endl;
+        return;
+    }
+    else {
+        maze[y][x]->visited = true;
+    }
+    if (maze[y][x]->top_wall || maze[y][x]->right_wall) {
+        stack.push_back(maze[y][x]);
+        update_distances(stack);
+    }
+    if (y > 0) {
+        explore(stack, y - 1, x);
+    }
+    if (x > 0) {
+        explore(stack, y, x - 1);
+    }
+    if (y < MAZE_SIZE - 1) {
+        explore(stack, y + 1, x);
+    }
+    if (x < MAZE_SIZE - 1) {
+        explore(stack, y, x + 1);
     }
 }
 
@@ -520,24 +558,22 @@ void print_debug_maze() {
 
 
 int main() {
-        init_maze();
-    //    output_maze();
-
+    init_maze();
     ////    generate_random_walls();
-        print_maze();
-    //    vector<Cell*> cells;
-    //    cells.push_back(maze[0][0]);
-    //    add_cell_to_update(cells, maze[7][0]);
-    //    update_distances(cells);
+    print_maze();
 
-  //  load_maze("2008japan.maze");
-        load_maze("2011robotic");
+    load_maze("mazes/2008japan.maze");
+    print_maze();
 
-        serialize(16, 16);
-        deserialize();
-        cout << "     " << endl;
+    vector<Cell*> cells;
+    explore(cells, 0, 0);
+
+    print_maze();
+    //      load_maze("2011robotic");
+    print_maze();
+    serialize(16, 16);
+    deserialize();
+    cout << "     " << endl;
     //generateOnePath(maze);
-        print_debug_maze();
-
-    getchar();
+    print_debug_maze();
 }

@@ -25,10 +25,10 @@ class Cell {
 public:
     int y;
     int x;
-    int dist;
-//    unsigned char dist;
+    unsigned char dist;
     bool top_wall;
     bool right_wall;
+    bool visited;
 
     Cell(int y, int x) : y(y), x(x), dist(0), top_wall(false), right_wall(false) {}
     Cell(int y, int x, int dist) : y(y), x(x), dist(dist), top_wall(false), right_wall(false) {if (y < 8 && x == 0) right_wall=true;}
@@ -44,7 +44,11 @@ extern Cell *mazeIn[MAZE_SIZE][MAZE_SIZE];
 
 //void update_distances(vector<Cell*> &stack)();
 
+
+
 bool fully_explored();
+
+void explore();
 
 bool is_solved();
 
