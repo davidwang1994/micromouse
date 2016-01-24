@@ -1,6 +1,6 @@
 #ifndef __MAZE_GEN_H__
 #define __MAZE_GEN_H__
-
+#include "maze.h"
 
 
 //Generates a valid random maze with one solveable path and every cell is visitable 
