@@ -88,16 +88,14 @@ void init_maze() {
 void load_maze(string file_name) {
     ifstream file(file_name);
     string top, right;
-    int row = 0;
-    while (row < 16) {
+    int row = MAZE_SIZE - 1;
+    while (row >= 0) {
         getline(file, top);
         getline(file, right);
-        for (int col = 0; col < 16; col++) {
+        for (int col = 0; col < MAZE_SIZE; col++) {
             maze[row][col] = new Cell(row, col, top[(col * 2) + 1] == '-', right[(col * 2) + 2] == '|');
-            cout << (top[(col * 2) + 1] == '-') << (right[(col * 2) + 2] == '|') << "\n";
         }
-        cout << "\n";
-        row++;
+        row--;
     }
 
     int goal1 = MAZE_SIZE / 2;
