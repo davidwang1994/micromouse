@@ -1,7 +1,6 @@
 // micromouse.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
 #include "micromouse.h"
 
 
@@ -596,11 +595,9 @@ int main() {
 	//    add_cell_to_update(cells, maze[7][0]);
 	//    update_distances(cells);
 	
-	load_maze("2008japan.maze");
+	load_maze("maze/mazes/2008japan.maze");
 	//generateOnePath(maze);
 	print_maze();
-	
-	getchar();
 }
 
 /*
