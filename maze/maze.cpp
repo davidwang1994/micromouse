@@ -9,35 +9,41 @@ Cell *mazeIn[MAZE_SIZE][MAZE_SIZE];
 * Calculates the total number of cells needed to get from a point (x1, y1)
 * to a point (x2, y2).
 */
-unsigned char manhattan_dist(unsigned char x1, unsigned char x2, unsigned char y1, unsigned char y2) {
+int manhattan_dist(int x1, int x2, int y1, int y2) {
     return abs(x1 - x2) + abs(y1 - y2);
 }
 
 /*
 * Function that takes the minimum of the four given distances
 */
-unsigned char min4(unsigned char a, unsigned char b, unsigned char c, unsigned char d) {
-    unsigned char min;
+int min4(int a, int b, int c, int d) {
+    int min;
     (a < b) ? min = a : min = b;
     if (c < min) min = c;
     if (d < min) min = d;
     return min;
 }
 
-unsigned char min_open_neighbor(vector<Cell*> cells) {
-    unsigned char min = CHAR_MAX;
-    for (vector<Cell*>::iterator it = cells.begin(); it != cells.end(); it++)
+int min_open_neighbor(vector<Cell*> cells) {
+    int min = UCHAR_MAX;
+//    cout << "neighbors: " << endl;
+//    for (vector<Cell *>::iterator it = cells.begin(); it != cells.end(); it++) {
+//        cout << "y: " << (*it)->y <<  " x: " << (*it)->x << " dist: " << (*it)->dist << endl;
+//    }
+    for (vector<Cell *>::iterator it = cells.begin(); it != cells.end(); it++) {
+//        cout << "cell x: " << (*it)->x << " y: " << (*it)->y << " min: " << (*it)->dist << endl;
         if ((*it)->dist < min) {
             min = (*it)->dist;
         }
+    }
     return min;
 }
 
 bool is_center(Cell *cell) {
-    unsigned char x = cell->x;
-    unsigned char y = cell->y;
-    unsigned char goal1 = MAZE_SIZE / 2;
-    unsigned char goal2 = (MAZE_SIZE - 1) / 2;
+    int x = cell->x;
+    int y = cell->y;
+    int goal1 = MAZE_SIZE / 2;
+    int goal2 = (MAZE_SIZE - 1) / 2;
     if (manhattan_dist(y, goal1, x, goal1) == 0 ||
         manhattan_dist(y, goal1, x, goal2) == 0 ||
         manhattan_dist(y, goal2, x, goal1) == 0 ||
@@ -51,8 +57,8 @@ bool is_center(Cell *cell) {
 * Initializes the maze using the manhattan distances as the starting distances.
 */
 void init_maze() {
-    unsigned char goal1 = MAZE_SIZE / 2;
-    unsigned char goal2 = (MAZE_SIZE - 1) / 2;
+    int goal1 = MAZE_SIZE / 2;
+    int goal2 = (MAZE_SIZE - 1) / 2;
     for (int i = 0; i < MAZE_SIZE; i++) {
         for (int j = 0; j < MAZE_SIZE; j++) {
             // Distance of the cell will be the minimum distance to the closest
@@ -237,33 +243,54 @@ void update_distances(vector<Cell*> &stack) {
         stack.pop_back();
         x = current->x;
         y = current->y;
+//        cout << "update distance cell y: " << y << " x: " << x << " dist: " << current->dist << endl;
+        // check top neighbor
+
+        if (is_center(current)) {
+            continue;
+        }
+
         // check top neighbor
         if (y < MAZE_SIZE - 1) {
+//            cout << "Check top neighbor" << endl;
             neighbors.push_back(maze[y + 1][x]);
-            if (!current->top_wall)
+            if (!current->top_wall) {
+//                cout << "Has top neighbor" << endl;
                 open_neighbors.push_back(maze[y + 1][x]);
+            }
         }
         // check right neighbor
         if (x < MAZE_SIZE - 1) {
+//            cout << "Check right neighbor" << endl;
             neighbors.push_back(maze[y][x + 1]);
-            if (!current->right_wall)
+            if (!current->right_wall) {
+//                cout << "Has right neighbor" << endl;
                 open_neighbors.push_back(maze[y][x + 1]);
+            }
         }
         // check bottom neighbor
         if (y > 0) {
             neighbors.push_back(maze[y - 1][x]);
-            if (maze[y - 1][x]->top_wall) {
+            if (!maze[y - 1][x]->top_wall) {
                 open_neighbors.push_back(maze[y - 1][x]);
             }
         }
         // check left neighbor
         if (x > 0) {
+ //           cout << "Check left neighbor" << endl;
             neighbors.push_back(maze[y][x - 1]);
-            if (maze[y][x - 1]->right_wall) {
+            if (!maze[y][x - 1]->right_wall) {
+//                cout << "Has left neighbor" << endl;
                 open_neighbors.push_back(maze[y][x - 1]);
             }
         }
+        if (open_neighbors.empty()) {
+            neighbors.clear();
+            continue;
+        }
+//        cout << "number open_neighbors: " << open_neighbors.size() << endl;
         min = min_open_neighbor(open_neighbors);
+//        cout << "minimum neighbor min: " << min << endl;
         open_neighbors.clear();
         if (current->dist - 1 != min) {
 //            cout << "min: " << min << endl;
@@ -271,11 +298,13 @@ void update_distances(vector<Cell*> &stack) {
             for (vector<Cell *>::iterator it = neighbors.begin(); it != neighbors.end(); it++) {
                 if (!is_center(*it)) {
                     stack.push_back(*it);
-//                    cout << "pushed cell: (" << (*it)->x << "," << (*it)->y << ")" << endl;
                 }
             }
             neighbors.clear();
         }
+
+//        print_maze();
+
     }
 }
 
@@ -291,9 +320,7 @@ bool fully_explored() {
 }
 
 void explore(vector<Cell*> &stack, int y, int x) {
-    cout << "before check x: " << x << " y: " << y << endl;
     if (maze[y][x]->visited) {
-        cout << "after check x: " << x << " y: " << y << endl;
         return;
     }
     else {
@@ -303,17 +330,85 @@ void explore(vector<Cell*> &stack, int y, int x) {
         stack.push_back(maze[y][x]);
         update_distances(stack);
     }
-    if (y > 0) {
-        explore(stack, y - 1, x);
+
+    // if mouse is located bottom left of center then we want to prioritize exploring top/right
+    if (y < MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
+        // explore top
+        if (y < MAZE_SIZE - 1) {
+            explore(stack, y + 1, x);
+        }
+        // explore right
+        if (x < MAZE_SIZE - 1) {
+            explore(stack, y, x + 1);
+        }
+        // explore down
+        if (y > 0) {
+            explore(stack, y - 1, x);
+        }
+        // explore left
+        if (x > 0) {
+            explore(stack, y, x - 1);
+        }
     }
-    if (x > 0) {
-        explore(stack, y, x - 1);
+
+    // if mouse is located top left of center then we want to prioritize exploring bottom/right
+    else if (y > MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
+        // explore right
+        if (x < MAZE_SIZE - 1) {
+            explore(stack, y, x + 1);
+        }
+        // explore down
+        if (y > 0) {
+            explore(stack, y - 1, x);
+        }
+        // explore top
+        if (y < MAZE_SIZE - 1) {
+            explore(stack, y + 1, x);
+        }
+        // explore left
+        if (x > 0) {
+            explore(stack, y, x - 1);
+        }
     }
-    if (y < MAZE_SIZE - 1) {
-        explore(stack, y + 1, x);
+
+    // if mouse is located top right of center then we want to prioritize exploring bottom/left
+    else if (y > MAZE_SIZE / 2 && x > MAZE_SIZE / 2) {
+        // explore down
+        if (y > 0) {
+            explore(stack, y - 1, x);
+        }
+        // explore left
+        if (x > 0) {
+            explore(stack, y, x - 1);
+        }
+        // explore top
+        if (y < MAZE_SIZE - 1) {
+            explore(stack, y + 1, x);
+        }
+        // explore right
+        if (x < MAZE_SIZE - 1) {
+            explore(stack, y, x + 1);
+        }
     }
-    if (x < MAZE_SIZE - 1) {
-        explore(stack, y, x + 1);
+
+    // if mouse is located bottom right of center then we want to prioritize exploring bottom/right
+    else if (y < MAZE_SIZE / 2 && x > MAZE_SIZE / 2) {
+        // explore left
+        if (x > 0) {
+            explore(stack, y, x - 1);
+        }
+        // explore top
+        if (y < MAZE_SIZE - 1) {
+            explore(stack, y + 1, x);
+        }
+        // explore down
+        if (y > 0) {
+            explore(stack, y - 1, x);
+        }
+        // explore right
+        if (x < MAZE_SIZE - 1) {
+            explore(stack, y, x + 1);
+        }
     }
 }
 
@@ -483,7 +578,7 @@ void print_maze() {
     for (int i = 0; i < MAZE_SIZE; i++) {
         cout << "+---";
     }
-    cout << "+\n";
+    cout << "+\n" << endl;
 }
 
 void print_debug_maze() {
@@ -565,13 +660,14 @@ int main() {
 
     vector<Cell*> cells;
     explore(cells, 0, 0);
+//    cells.push_back(maze[7][1]);
+//    update_distances(cells);
 
     print_maze();
     //      load_maze("2011robotic");
-    print_maze();
-    serialize(16, 16);
-    deserialize();
-    cout << "     " << endl;
-    //generateOnePath(maze);
-    print_debug_maze();
+//    serialize(16, 16);
+//    deserialize();
+//    cout << "     " << endl;
+//    //generateOnePath(maze);
+//    print_debug_maze();
 }

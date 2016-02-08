@@ -25,7 +25,7 @@ class Cell {
 public:
     int y;
     int x;
-    unsigned char dist;
+    int dist;
     bool top_wall;
     bool right_wall;
     bool visited;
