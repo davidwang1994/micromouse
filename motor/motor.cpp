@@ -1,153 +1,65 @@
-#include "motordriver.h" //Motor
+#include "motor.h"
 
 
+//Defines the 2 motors in use
+Motor leftMotor(D3, D2, D1);
+Motor rightMotor(D6, D5, D4);
 
-/*
-Drive forward. Speed (actually duty cycle)  -1.0 to 1.0, negative for backwards. 
-*/
-void drive(float speed){
-    if (locked) return 0;
-    leftMotor.speed(speed);
-    rightMotor.speed(speed);  
-    return 1;
+
+//Stops the motors without breaking. Breaking may or may not be necessary pending test; just assume its mostly a complete stop for now
+void stop(){
+    leftMotor.stop();
+    rightMotor.stop();
+    leftEncoder.getPulses();
 }
 
 /*
-In place turn with given speed setting. -1.0 to 1.0. Positive is RIGHT. Negative is LEFT.
+Set motors to turn in place with given speed setting. -1.0 to 1.0. Positive is RIGHT. Negative is LEFT.
 */
-void turn(float speedAndDirection) {
-    if (locked) return 0;
+void turn(float speed) {
+    if (!locked){
     leftMotor.speed(speed);
     rightMotor.speed(-speed);
-    return 1;
-}
-
-/*
-Turns off the motors to coast without braking. Might work as brake pending testing.
-*/
-void stop(){
-    if (locked){
-      locked = 0;
-      motorInOperation.detach();
     }
-    leftMotor.coast();
-    righMotor.coast();
 }
 
-/*
-Dynamically brakes the motors. Might cause large stall currents. Avoid using pending testing
-*/
-bool brake(){
-    if (locked) return 0;
-    leftMotor.stop(0.3);
-    rightMotor.stop(0.3);
-    return 1;
-}
-
-/*
-Drives approximately the given distance (encoder pulses) at given speed.
-Distance must be positive, speed negative or positive
-
-Does not brake.
-Currently only uses encoders to approximate, not PID controlled.
-
-Hogs cpu.
-*/
-bool drive(int distance, float speed){
-    if (locked) return 0;
-    resetEncoders();
-    drive(speed);
-    if (speed > 0){  
-        while (getEncoderDistance() < distance);
+//Set motors to drive forwards or backwards at given speed. Speed is a float between -1.0 and 1.0, positive for forwards and negative for backwards
+void drive(float speed){
+    if (!locked){
+    leftMotor.speed(speed);
+    rightMotor.speed(speed);
     }
-    else {
-        while (getEncoderDistance() > distance);
-    }
-    return 1;
 }
 
-/*
-Drives approximately the given distance (encoder pulses) at given speed.
-Distance must be positive, speed negative or positive
-
-This version is async and performs an optional callback function on termination.
-Only stop() can terminate this prematurely, in which case the callback function is not performed
-All other methods to access motor will return false or not perform.
-
-Does not brake.
-Currently only uses encoders to approximate, not PID controlled.
-*/
-void drive(int distance, float speed, void(*callback)(void)){
+//Set motors to drive approximately the given distance at given speed, without breaking 
+//Asynchronous, with callback on termination
+void drive(float speed, int distance, void(*callback)(void)){
     if (!locked){
         resetEncoders();
         DriveLock lock (distance, speed, callback);
-        motorInOperation.attach_us(&_drive, DriveLock::drive SAMPLE_RATE);
+        locked = true;
+        motorInOperation.attach(&lock, &DriveLock::drive, 0.001); //Checks every milisecond
     }
 }
 
 
 
-
-
-
-
-
-/*
-#include <Arduino.h>
-#include "motors.h"
-
-// input desired force and current speed
-static float idealMotorOutput(float force, float velocity) {
-  float required_current, back_emf;
-  required_current = force / FORCE_PER_AMP;
-  back_emf = velocity / VELOCITY_PER_VBEMF;
-  return ((required_current * RATED_INTERNAL_RESISTANCE + back_emf) / BATTERY_VOLTAGE);
+//Defines a motor and its basic methods
+Motor::Motor(PinName _pwm, PinName _fwd, PinName _rev):
+        pwm(_pwm), fwd(_fwd), rev(_rev) {
+            
+    pwm.period(0.001);
+    pwm = 0; 
+    fwd = 0;
+    rev = 0;
 }
-Motor motor_l (MOTOR_A1_PIN, MOTOR_A2_PIN, MOTOR_AP_PIN);
-Motor motor_r (MOTOR_B1_PIN, MOTOR_B2_PIN, MOTOR_BP_PIN);
-
-Motor::Motor(int pin1, int pin2, int pwm_pin) {
-  pin1_ = pin1;
-  pin2_ = pin2;
-  pin_pwm_ = pwm_pin;
-
-  pinMode(pin1_, OUTPUT);
-  pinMode(pin2_, OUTPUT);
-  pinMode(pin_pwm_, OUTPUT);
+void Motor::speed(float speed) {
+    fwd = speed > 0.0f;
+    rev = speed < 0.0f;
+    pwm = abs(speed);  //The one and only way to control power output with PWM is by setting the duty cycle, aka relative width. PFM is modulation of frequency, PWM is width.
+}
+void Motor::stop() {
+    speed(0.0);
 }
 
-void Motor::Set(float accel, float current_velocity) {
-  float force;
-  float speed;
-  int pin1_state, pin2_state;
-  int speed_raw;
 
-  if (current_velocity > 0) {
-    force = (ROBOT_MASS * accel + FRICTION_FORCE) / NUMBER_OF_MOTORS;
-  } else {
-    force = (ROBOT_MASS * accel - FRICTION_FORCE) / NUMBER_OF_MOTORS;
-  }
-
-  speed = idealMotorOutput(force, current_velocity);
-  speed = constrain(speed, -1, 1);
-
-  speed_raw = abs((int)(round(PWM_SPEED_STEPS * speed)));
-
-  if (speed > 0.0) {
-    pin1_state = HIGH;
-    pin2_state = LOW;
-  } else if (speed < 0.0) {
-    pin1_state = LOW;
-    pin2_state = HIGH;
-  } else {
-    pin1_state = LOW;
-    pin2_state = LOW;
-  }
-
-  digitalWrite(pin1_, pin1_state);
-  delay(1000);   // set a one second delay
-  digitalWrite(pin2_, pin2_state);
-  delay(1000);  // set a one second delay
-  analogWrite(pin_pwm_, speed_raw);
-}
-*/

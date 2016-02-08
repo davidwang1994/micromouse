@@ -1,38 +1,58 @@
-#ifndef motor_H
-#define motor_H
+#ifndef MOTOR_H
+#define MOTOR_H
 
-
-/*
-A utility class for motor management and drive control.
-
-Motors themselves support speed(float), coast(), stop(float) themselves.
-See motordriver.h
-*/
-
-#include "motordriver.h"
+#include "mbed.h"
 #include "encoder.h"
 
+//The two motors leftMotor and rightMotor are defined at the bottom.
 
-Motor leftMotor(D0, D1, D2, 1); 
-Motor rightMotor(D4, D5, D6, 1); 
+/**
+ * Represents a PWM controlled motor
+ */
+class Motor {
+public:
+    PwmOut pwm;
+    DigitalOut fwd;
+    DigitalOut rev;
+    
+    Motor(PinName _pwm, PinName _fwd, PinName _rev);
+    
+    /** 
+     * Set the speed of the motor. Float value between -1.0 and 1.0
+     */
+    void speed(float speed);
+    
+    /**
+     * Stop motor, without breaking.
+     */
+    void stop(void);
+};
 
-const int SAMPLE_RATE = 1000; //per 1000 Microseconds
 
- 
-Ticker motorInOperation;
-bool locked = 0; //Lock for async motorInOperation
 
-//Lock class --- TODO: expand to motor and encoder lock since encoder cannot be reset.
+
+extern Motor leftMotor;
+extern Motor rightMotor;
+
+Ticker motorInOperation; //Ticker to drive async
+bool locked = false; //Motor is locked for driving, or not --- alternatively could just use global state without need for lock object.
+
+//Lock class for driving --- TODO(maybe): expand to motor and encoder lock since encoder cannot be reset.
 class DriveLock {
     int _distance;
     float _speed;
     void(*_callback)(void);
 public:
     DriveLock(int distance, float speed, void(*callback)(void)) : _distance(distance), _speed(speed), _callback(callback){}
-	void drive(void) {
-		if (getEncoderDistance() >= _distance){
-			locked = false;
-			motorInOperation.detach();
-		}
-	}
-}
+    void drive(void) {
+        if (getEncoderDistance() >= _distance){
+            locked = false;
+            motorInOperation.detach();
+            if (_callback != 0){
+                _callback();
+            }
+        }
+    }
+};
+
+#endif
