@@ -4,6 +4,7 @@
 
 
 //Exported from mbed for use with local Keli compiler (the mbed compiler)
+//Compiling this folder with Keli allows for direct exporting onto mice
 
 //Everything is in the same folder because I had them in that way on mbed. 
 //motor/encoder/pin_assignemnt and this file are the only ones fully tested
