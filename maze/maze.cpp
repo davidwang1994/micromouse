@@ -233,7 +233,6 @@ void update_distances(vector<Cell*> &stack) {
     vector<Cell *> open_neighbors;
     vector<Cell*> neighbors;
 
-    int neighbor_dist[4];
     int x, y;
     int min;
     while (!stack.empty()) {
