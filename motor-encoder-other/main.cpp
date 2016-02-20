@@ -1,7 +1,9 @@
 #include "mbed.h"
+#include "maze.h"
 #include "pin_assignments.h"
 
 
+const float SENSOR_THRESHOLD = 0.5;
 
 //Exported from mbed for use with local Keli compiler (the mbed compiler)
 //Compiling this folder with Keli allows for direct exporting onto mice
@@ -9,14 +11,6 @@
 //Everything is in the same folder because I had them in that way on mbed. 
 //motor/encoder/pin_assignemnt and this file are the only ones fully tested
 
-
-
-DigitalIn user_button(USER_BUTTON);
-
-InterruptIn leftChannelA(D3);
-InterruptIn rightChannelA(D5);
-
-Ticker ticker;
 
 void leftGotPulse(){
     pc.printf("Left: %i\r\n", leftEncoder);
@@ -32,6 +26,20 @@ void printStatus(){
     pc.printf("\r\nLeft: %i\r\n", leftEncoder);
     pc.printf("Right: %i\r\n", rightEncoder);
     pc.printf("Motor Speed: %.2f\r\n", speed);
+}
+
+/** set the walls of the current cell by using the IR sensors **/
+void set_walls(int x, int y){
+    if (frontIR1.read() > SENSOR_THRESHOLD && frontIR2 > SENSOR_THRESHOLD){
+        // need to re-evaluate the sensor positions
+        maze[y][x]->top_wall = true;
+    }
+    if (leftIR > SENSOR_THRESHOLD) {
+        maze[y][x-1]->right_wall= true;
+    }
+    if (rightIR> SENSOR_THRESHOLD) {
+        maze[y][x]->right_wall = true;
+    }
 }
 
 int main() {

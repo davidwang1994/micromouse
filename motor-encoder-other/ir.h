@@ -26,12 +26,7 @@ class IRSensor {
     }
 }
 
-extern IRSensor leftIR1;
-extern IRSensor leftIR2;
-extern IRSensor leftIR3;
-extern IRSensor rightIR1;
-extern IRSensor rightIR2;
-extern IRSensor rightIR3;
+
 
 
 #endif*/
