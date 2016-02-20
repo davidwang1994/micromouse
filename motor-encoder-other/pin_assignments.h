@@ -1,10 +1,13 @@
+#ifndef __PIN_ASSIGNMENTS__
+#define __PIN_ASSIGNMENTS__
+
 #include "IO.h"
 #include "motor.h"
 #include "encoder.h"
 
 //IO
 //DigitalIn user_button(USER_BUTTON);
-//Serial pc(PA_2, PA_3); //D0, D1
+Serial pc(PA_2, PA_3); //D0, D1
 
 //Encoder and motor channels are mirrowed for left/right to ensure positive is forwards. 
 //If in the end it is all negative, 
@@ -16,3 +19,5 @@ Encoder rightEncoder(D6, D5);
 
 //Sensors
 //Gyro gyro(A0);
+
+#endif

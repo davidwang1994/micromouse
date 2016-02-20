@@ -67,13 +67,13 @@ void init_maze() {
                                              manhattan_dist(i, goal1, j, goal2),
                                              manhattan_dist(i, goal2, j, goal1),
                                              manhattan_dist(i, goal2, j, goal2)));
-  /**          cout <<"store: " << min4(manhattan_dist(i, goal1, j, goal1),
-                                             manhattan_dist(i, goal1, j, goal2),
-                                             manhattan_dist(i, goal2, j, goal1),
-                                             manhattan_dist(i, goal2, j, goal2)) <<
-                                             " in ( " << i <<" , "<< j << " )......."<<endl;
-            cout<< " ( " << i << " , " << j << " ):  " << maze[i][j]->dist << endl;
-**/
+            /**          cout <<"store: " << min4(manhattan_dist(i, goal1, j, goal1),
+                                                       manhattan_dist(i, goal1, j, goal2),
+                                                       manhattan_dist(i, goal2, j, goal1),
+                                                       manhattan_dist(i, goal2, j, goal2)) <<
+                                                       " in ( " << i <<" , "<< j << " )......."<<endl;
+                      cout<< " ( " << i << " , " << j << " ):  " << maze[i][j]->dist << endl;
+          **/
         }
     }
 
@@ -118,7 +118,7 @@ void load_maze(string file_name) {
     }
 }
 
-/**
+/
 * Get the currently constructed maze and write to a binary file
 *
 void output_maze(){
@@ -192,7 +192,7 @@ void deserialize() {
   //  fclose(pFile);
 }
 
-/**
+/
 * Read in the maze data from a previously stored binary file
 **/
 
@@ -273,7 +273,7 @@ void update_distances(vector<Cell*> &stack) {
         }
         // check left neighbor
         if (x > 0) {
- //           cout << "Check left neighbor" << endl;
+            //           cout << "Check left neighbor" << endl;
             neighbors.push_back(maze[y][x - 1]);
             if (!maze[y][x - 1]->right_wall) {
 //                cout << "Has left neighbor" << endl;
@@ -305,13 +305,13 @@ void update_distances(vector<Cell*> &stack) {
 }
 
 bool fully_explored() {
-   for (int y = 0; y < MAZE_SIZE; y++) {
-       for (int x = 0; x < MAZE_SIZE; x++) {
-           if (maze[y][x] == false) {
-               return false;
-           }
-       }
-   }
+    for (int y = 0; y < MAZE_SIZE; y++) {
+        for (int x = 0; x < MAZE_SIZE; x++) {
+            if (maze[y][x] == false) {
+                return false;
+            }
+        }
+    }
     return true;
 }
 
@@ -347,7 +347,7 @@ void explore(vector<Cell*> &stack, int y, int x) {
         }
     }
 
-    // if mouse is located top left of center then we want to prioritize exploring bottom/right
+        // if mouse is located top left of center then we want to prioritize exploring bottom/right
     else if (y > MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
         // explore right
         if (x < MAZE_SIZE - 1) {
@@ -367,7 +367,7 @@ void explore(vector<Cell*> &stack, int y, int x) {
         }
     }
 
-    // if mouse is located top right of center then we want to prioritize exploring bottom/left
+        // if mouse is located top right of center then we want to prioritize exploring bottom/left
     else if (y > MAZE_SIZE / 2 && x > MAZE_SIZE / 2) {
         // explore down
         if (y > 0) {
@@ -387,7 +387,7 @@ void explore(vector<Cell*> &stack, int y, int x) {
         }
     }
 
-    // if mouse is located bottom right of center then we want to prioritize exploring bottom/right
+        // if mouse is located bottom right of center then we want to prioritize exploring bottom/right
     else if (y < MAZE_SIZE / 2 && x > MAZE_SIZE / 2) {
         // explore left
         if (x > 0) {
@@ -508,7 +508,8 @@ void generate_random_walls() {
 */
 
 /*
-* Function to print out an ascii representation of the maze.
+ * Function to print out an ascii representation of the maze.
+ */
 
 void print_maze() {
 
@@ -532,51 +533,52 @@ void print_maze() {
 
             if (i % 2 != 0) {
                 if (maze[y][j]->top_wall) {
-                    cout << "+---";
+                    pc.printf("+---");
                 }
                 else {
-                    cout << "+   ";
+                    pc.printf("+   ");
                 }
                 if (j == MAZE_SIZE - 1) {
-                    cout << "+";
+                    pc.printf("+");
                 }
             }
 
             else {
                 if (j == 0) {
-                    cout << "|";
+                    pc.printf("|");
                 }
 
                 int dist = maze[y][j]->dist;
-          //      cout << "   ";
+          //      pc.printf("   ");
                 if (dist > 99) {
-                    cout << dist;
+                    pc.printf("%d",dist);
                 }
                 else if (dist > 9) {
-                    cout << " " << dist;
+                    pc.printf(" %d", dist);
                 }
                 else {
-                    cout << " " << dist << " ";
+                    pc.printf(" %d ", dist);
                 }
 
                 if (maze[y][j]->right_wall || j == MAZE_SIZE - 1) {
-                    cout << "|";
+                    pc.printf("|");
                 }
                 else {
-                    cout << " ";
+                    pc.printf(" ");
                 }
             }
         }
-        cout << "\n";
+        pc.printf("\n");
     }
 
     // print bottom wall
     for (int i = 0; i < MAZE_SIZE; i++) {
-        cout << "+---";
+        pc.printf("+---");
     }
-    cout << "+\n" << endl;
+    pc.printf("+\n\n");
 }
 
+/*
 void print_debug_maze() {
 
     // print top wall
@@ -644,17 +646,17 @@ void print_debug_maze() {
 }
 
 
-/*
+*/
 
 int main() {
     init_maze();
     ////    generate_random_walls();
     print_maze();
 
-    load_maze("mazes/2008japan.maze");
+//    load_maze("mazes/2008japan.maze");
     print_maze();
 
-    vector<Cell*> cells;
+//    vector<Cell*> cells;
     explore(cells, 0, 0);
 //    cells.push_back(maze[7][1]);
 //    update_distances(cells);

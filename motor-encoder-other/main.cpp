@@ -12,7 +12,6 @@
 
 
 DigitalIn user_button(USER_BUTTON);
-Serial pc(PA_2, PA_3); //D0, D1
 
 InterruptIn leftChannelA(D3);
 InterruptIn rightChannelA(D5);

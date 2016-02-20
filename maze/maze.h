@@ -5,11 +5,10 @@
 #include <ctime>
 #include <climits>
 #include <cstdlib>
-//#include <iomanip>
-//#include <iostream>
-//#include <fstream>
 #include <string>
 #include <vector>
+
+#include "../motor-encoder-other/pin_assignments.h"
 
 #define TOP 0
 #define Right 1
