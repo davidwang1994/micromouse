@@ -1,5 +1,5 @@
 #include "maze.h"
-#include "maze_generator.h"
+//#include "maze_generator.h"
 
 
 Cell *maze[MAZE_SIZE][MAZE_SIZE];
@@ -83,14 +83,14 @@ void init_maze() {
 //        }
 //    }
 
-    cout << "size of the matrix is: "<< sizeof(maze) << endl;
+    //cout << "size of the matrix is: "<< sizeof(maze) << endl;
 }
 
 /*
 * Initializes Cell * maze from given maze text file (formatted similar to http://www.tcp4me.com/mmr/mazes/)
 * Assumes 33*33 text grid in file and only checks first 32 rows and for - | ' ' at their correct positions
 * A new cell constructor was added for just posiiton and walls.
-*/
+
 void load_maze(string file_name) {
     ifstream file(file_name);
     string top, right;
@@ -120,7 +120,7 @@ void load_maze(string file_name) {
 
 /**
 * Get the currently constructed maze and write to a binary file
-**/
+*
 void output_maze(){
     // output the maze to a binary file
     ofstream outfile("maze_out", ofstream::binary);
@@ -155,9 +155,6 @@ void serialize(int rows, int cols) {
     outfile.close();
 
 
-    /** Outputting the maze structure inti a file
-    * using the fopen function
-    **/
   //  FILE* pFile = fopen("maze_out", "wb");
   //  fwrite(maze, sizeof(maze), 1, pFile);
   //  fclose(pFile);
@@ -427,11 +424,11 @@ void explore(vector<Cell*> &stack, int y, int x) {
 void generate_random_walls() {
     string s;
     srand((unsigned)time(0));
-    cout << time(0) << endl;
+    //cout << time(0) << endl;
     int numCells = MAZE_SIZE * MAZE_SIZE;
     int numWalls = rand() % (numCells / 4) + (numCells * 3 / 4);
-    cout << rand() << endl;
-    cout << numWalls << endl;
+    //cout << rand() << endl;
+    //cout << numWalls << endl;
 
     for (int i = 0; i < MAZE_SIZE; i++) {
         for (int j = 0; j < MAZE_SIZE; j++) {
@@ -464,7 +461,7 @@ void generate_random_walls() {
         }
         s += "\n";
     }
-    cout << s << endl;
+    //cout << s << endl;
 }
 
 /*
@@ -513,14 +510,14 @@ void generate_random_walls() {
 
 /*
 * Function to print out an ascii representation of the maze.
-*/
+
 void print_maze() {
 
     // print top wall
     for (int i = 0; i < MAZE_SIZE; i++) {
-        cout << "+---";
+        //cout << "+---";
     }
-    cout << "+\n";
+    //cout << "+\n";
 
     int rows = MAZE_SIZE + (MAZE_SIZE - 1);
     int y;
@@ -648,7 +645,7 @@ void print_debug_maze() {
 }
 
 
-
+/*
 
 int main() {
     init_maze();
@@ -671,3 +668,5 @@ int main() {
 //    //generateOnePath(maze);
 //    print_debug_maze();
 }
+
+*/
