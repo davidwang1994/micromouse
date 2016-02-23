@@ -37,11 +37,11 @@ public:
 extern Cell *maze[MAZE_SIZE][MAZE_SIZE];
 extern Cell *mazeIn[MAZE_SIZE][MAZE_SIZE];
 
-//int manhattan_dist(int x1, int x2, int y1, int y2)();
-//
-//int min4(int a, int b, int c, int d)();
+int manhattan_dist(int x1, int x2, int y1, int y2);
 
-//void update_distances(vector<Cell*> &stack)();
+int min4(int a, int b, int c, int d);
+
+void update_distances(vector<Cell*> &stack);
 
 
 
