@@ -11,13 +11,15 @@
 #include "../motor-encoder-other/pin_assignments.h"
 
 #define TOP 0
-#define Right 1
-#define Bottom 2
-#define Left 3
+#define RIGHT 1
+#define DOWN 2
+#define LEFT 3
 
 using namespace std;
 
 const int MAZE_SIZE = 16;
+
+int direction = TOP;
 
 class Cell {
 
@@ -47,7 +49,7 @@ void update_distances(vector<Cell*> &stack);
 
 bool fully_explored();
 
-void explore();
+//void explore();
 
 bool is_solved();
 

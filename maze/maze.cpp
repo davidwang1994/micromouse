@@ -1,4 +1,5 @@
 #include "maze.h"
+#include "../motor-encoder-other/ir.h"
 //#include "maze_generator.h"
 
 
@@ -74,6 +75,12 @@ void init_maze() {
                                                        " in ( " << i <<" , "<< j << " )......."<<endl;
                       cout<< " ( " << i << " , " << j << " ):  " << maze[i][j]->dist << endl;
           **/
+            if (i == MAZE_SIZE - 1) {
+                maze[i][j]->top_wall = true;
+            }
+            if (j == MAZE_SIZE - 1) {
+                maze[i][j]->right_wall = true;
+            }
         }
     }
 
@@ -304,6 +311,69 @@ void update_distances(vector<Cell*> &stack) {
     }
 }
 
+void set_wall(int y, int x) {
+    if (direction == TOP) {
+        if (has_front_wall()) {
+            maze[y][x]->top_wall = true;
+        }
+        if (has_right_wall()) {
+            maze[y][x]->right_wall = true;
+        }
+        if (x > 0) {
+            if (has_left_wall()) {
+                maze[y][x - 1]->right_wall = true;
+            }
+        }
+    }
+
+    else if (direction == RIGHT) {
+        if (has_front_wall()) {
+            maze[y][x]->right_wall = true;
+        }
+        if (y > 0) {
+            if (has_right_wall()) {
+                maze[y-1][x]->top_wall = true;
+            }
+        }
+        if (has_left_wall()) {
+            maze[y][x]->top_wall = true;
+        }
+    }
+
+    else if (direction == DOWN) {
+        if (y > 0) {
+            if (has_front_wall()) {
+                maze[y-1][x]->top_wall = true;
+            }
+        }
+        if (x > 0) {
+            if (has_right_wall()) {
+                maze[y][x-1]->right_wall = true;
+            }
+        }
+        if (has_left_wall()) {
+            maze[y][x]->right_wall = true;
+        }
+
+    }
+
+    else if (direction == LEFT) {
+        if (x > 0) {
+            if (has_front_wall()) {
+                maze[y][x - 1]->right_wall = true;
+            }
+        }
+        if (has_right_wall()) {
+            maze[y][x]->top_wall = true;
+        }
+        if (y > 0) {
+            if (has_left_wall()) {
+                maze[y-1][x]->top_wall = true;
+            }
+        }
+    }
+}
+
 bool fully_explored() {
     for (int y = 0; y < MAZE_SIZE; y++) {
         for (int x = 0; x < MAZE_SIZE; x++) {
@@ -315,98 +385,6 @@ bool fully_explored() {
     return true;
 }
 
-void explore(vector<Cell*> &stack, int y, int x) {
-    if (maze[y][x]->visited) {
-        return;
-    }
-    else {
-        maze[y][x]->visited = true;
-    }
-    if (maze[y][x]->top_wall || maze[y][x]->right_wall) {
-        stack.push_back(maze[y][x]);
-        update_distances(stack);
-    }
-
-    // if mouse is located bottom left of center then we want to prioritize exploring top/right
-    if (y < MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
-        // explore top
-        if (y < MAZE_SIZE - 1) {
-            explore(stack, y + 1, x);
-        }
-        // explore right
-        if (x < MAZE_SIZE - 1) {
-            explore(stack, y, x + 1);
-        }
-        // explore down
-        if (y > 0) {
-            explore(stack, y - 1, x);
-        }
-        // explore left
-        if (x > 0) {
-            explore(stack, y, x - 1);
-        }
-    }
-
-        // if mouse is located top left of center then we want to prioritize exploring bottom/right
-    else if (y > MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
-        // explore right
-        if (x < MAZE_SIZE - 1) {
-            explore(stack, y, x + 1);
-        }
-        // explore down
-        if (y > 0) {
-            explore(stack, y - 1, x);
-        }
-        // explore top
-        if (y < MAZE_SIZE - 1) {
-            explore(stack, y + 1, x);
-        }
-        // explore left
-        if (x > 0) {
-            explore(stack, y, x - 1);
-        }
-    }
-
-        // if mouse is located top right of center then we want to prioritize exploring bottom/left
-    else if (y > MAZE_SIZE / 2 && x > MAZE_SIZE / 2) {
-        // explore down
-        if (y > 0) {
-            explore(stack, y - 1, x);
-        }
-        // explore left
-        if (x > 0) {
-            explore(stack, y, x - 1);
-        }
-        // explore top
-        if (y < MAZE_SIZE - 1) {
-            explore(stack, y + 1, x);
-        }
-        // explore right
-        if (x < MAZE_SIZE - 1) {
-            explore(stack, y, x + 1);
-        }
-    }
-
-        // if mouse is located bottom right of center then we want to prioritize exploring bottom/right
-    else if (y < MAZE_SIZE / 2 && x > MAZE_SIZE / 2) {
-        // explore left
-        if (x > 0) {
-            explore(stack, y, x - 1);
-        }
-        // explore top
-        if (y < MAZE_SIZE - 1) {
-            explore(stack, y + 1, x);
-        }
-        // explore down
-        if (y > 0) {
-            explore(stack, y - 1, x);
-        }
-        // explore right
-        if (x < MAZE_SIZE - 1) {
-            explore(stack, y, x + 1);
-        }
-    }
-}
 
 /*
 * Generates random walls for the maze. Call this function

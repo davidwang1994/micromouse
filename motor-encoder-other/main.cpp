@@ -1,9 +1,9 @@
 #include "mbed.h"
-#include "maze.h"
+#include "ir.h"
+#include "../maze/maze.h"
 #include "pin_assignments.h"
 
 
-const float SENSOR_THRESHOLD = 0.5;
 
 //Exported from mbed for use with local Keli compiler (the mbed compiler)
 //Compiling this folder with Keli allows for direct exporting onto mice
@@ -28,17 +28,97 @@ void printStatus(){
     pc.printf("Motor Speed: %.2f\r\n", speed);
 }
 
-/** set the walls of the current cell by using the IR sensors **/
-void set_walls(int x, int y){
-    if (frontIR1.read() > SENSOR_THRESHOLD && frontIR2 > SENSOR_THRESHOLD){
-        // need to re-evaluate the sensor positions
-        maze[y][x]->top_wall = true;
+void explore(vector<Cell*> &stack, int y, int x) {
+    if (maze[y][x]->visited) {
+        return;
     }
-    if (leftIR > SENSOR_THRESHOLD) {
-        maze[y][x-1]->right_wall= true;
+    else {
+        maze[y][x]->visited = true;
+        set_walls(y, x);
     }
-    if (rightIR> SENSOR_THRESHOLD) {
-        maze[y][x]->right_wall = true;
+    if (maze[y][x]->top_wall || maze[y][x]->right_wall) {
+        stack.push_back(maze[y][x]);
+        update_distances(stack);
+    }
+
+    // if mouse is located bottom left of center then we want to prioritize exploring top/right
+    if (y < MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
+        // explore top
+        if (y < MAZE_SIZE - 1) {
+            explore(stack, y + 1, x);
+        }
+        // explore right
+        if (x < MAZE_SIZE - 1) {
+            explore(stack, y, x + 1);
+        }
+        // explore down
+        if (y > 0) {
+            explore(stack, y - 1, x);
+        }
+        // explore left
+        if (x > 0) {
+            explore(stack, y, x - 1);
+        }
+    }
+
+        // if mouse is located top left of center then we want to prioritize exploring bottom/right
+    else if (y > MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
+        // explore right
+        if (x < MAZE_SIZE - 1) {
+            explore(stack, y, x + 1);
+        }
+        // explore down
+        if (y > 0) {
+            explore(stack, y - 1, x);
+        }
+        // explore top
+        if (y < MAZE_SIZE - 1) {
+            explore(stack, y + 1, x);
+        }
+        // explore left
+        if (x > 0) {
+            explore(stack, y, x - 1);
+        }
+    }
+
+        // if mouse is located top right of center then we want to prioritize exploring bottom/left
+    else if (y > MAZE_SIZE / 2 && x > MAZE_SIZE / 2) {
+        // explore down
+        if (y > 0) {
+            explore(stack, y - 1, x);
+        }
+        // explore left
+        if (x > 0) {
+            explore(stack, y, x - 1);
+        }
+        // explore top
+        if (y < MAZE_SIZE - 1) {
+            explore(stack, y + 1, x);
+        }
+        // explore right
+        if (x < MAZE_SIZE - 1) {
+            explore(stack, y, x + 1);
+        }
+    }
+
+        // if mouse is located bottom right of center then we want to prioritize exploring bottom/right
+    else if (y < MAZE_SIZE / 2 && x > MAZE_SIZE / 2) {
+        // explore left
+        if (x > 0) {
+            explore(stack, y, x - 1);
+        }
+        // explore top
+        if (y < MAZE_SIZE - 1) {
+            explore(stack, y + 1, x);
+        }
+        // explore down
+        if (y > 0) {
+            explore(stack, y - 1, x);
+        }
+        // explore right
+        if (x < MAZE_SIZE - 1) {
+            explore(stack, y, x + 1);
+        }
     }
 }
 
