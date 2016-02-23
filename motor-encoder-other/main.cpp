@@ -45,18 +45,22 @@ void explore(vector<Cell*> &stack, int y, int x) {
     if (y < MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
         // explore top
         if (y < MAZE_SIZE - 1) {
+            direction = TOP;
             explore(stack, y + 1, x);
         }
         // explore right
         if (x < MAZE_SIZE - 1) {
+            direction = RIGHT;
             explore(stack, y, x + 1);
         }
         // explore down
         if (y > 0) {
+            direction = DOWN;
             explore(stack, y - 1, x);
         }
         // explore left
         if (x > 0) {
+            direction = LEFT;
             explore(stack, y, x - 1);
         }
     }
@@ -65,18 +69,22 @@ void explore(vector<Cell*> &stack, int y, int x) {
     else if (y > MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
         // explore right
         if (x < MAZE_SIZE - 1) {
+            direction = RIGHT;
             explore(stack, y, x + 1);
         }
         // explore down
         if (y > 0) {
+            direction = DOWN;
             explore(stack, y - 1, x);
         }
         // explore top
         if (y < MAZE_SIZE - 1) {
+            direction = TOP;
             explore(stack, y + 1, x);
         }
         // explore left
         if (x > 0) {
+            direction = LEFT;
             explore(stack, y, x - 1);
         }
     }
@@ -85,18 +93,22 @@ void explore(vector<Cell*> &stack, int y, int x) {
     else if (y > MAZE_SIZE / 2 && x > MAZE_SIZE / 2) {
         // explore down
         if (y > 0) {
+            direction = DOWN;
             explore(stack, y - 1, x);
         }
         // explore left
         if (x > 0) {
+            direction = LEFT;
             explore(stack, y, x - 1);
         }
         // explore top
         if (y < MAZE_SIZE - 1) {
+            direction = TOP;
             explore(stack, y + 1, x);
         }
         // explore right
         if (x < MAZE_SIZE - 1) {
+            direction = RIGHT;
             explore(stack, y, x + 1);
         }
     }
@@ -105,18 +117,22 @@ void explore(vector<Cell*> &stack, int y, int x) {
     else if (y < MAZE_SIZE / 2 && x > MAZE_SIZE / 2) {
         // explore left
         if (x > 0) {
+            direction = LEFT;
             explore(stack, y, x - 1);
         }
         // explore top
         if (y < MAZE_SIZE - 1) {
+            direction = TOP;
             explore(stack, y + 1, x);
         }
         // explore down
         if (y > 0) {
+            direction = DOWN;
             explore(stack, y - 1, x);
         }
         // explore right
         if (x < MAZE_SIZE - 1) {
+            direction = RIGHT;
             explore(stack, y, x + 1);
         }
     }
