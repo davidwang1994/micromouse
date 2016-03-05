@@ -1,8 +1,8 @@
-/*#include "gyro.h"
+#include "gyro.h"
 
 
 
-Timeout gyroTimeOut;
+Timeout gyroTimeOut; //Delay for calibration
 
 
 //Creates the gyro using given input and calibrates asynchronously it over 2 seconds.
@@ -24,7 +24,16 @@ void Gyro::enable(){
     degrees = 0;
     if (!_isOn){
         _isOn = true;
-        _gyroTicker.attach(this, &Gyro::sample, GYRO_SAMPLE_PERIOD);
+        _gyroTicker.attach(this, &Gyro::sampleWithCallback, GYRO_SAMPLE_PERIOD);
+    }
+}
+
+void Gyro::enable(void(*per_sample_callback)(void)){
+    degrees = 0;
+		_per_sample_callback = per_sample_callback;
+    if (!_isOn){
+        _isOn = true;
+        _gyroTicker.attach(this, &Gyro::sampleWithCallback, GYRO_SAMPLE_PERIOD);
     }
 }
 
@@ -37,7 +46,7 @@ void Gyro::disable(){
     }
 }
 
-//Calibrates the gyro over 1 second, setting the null voltage. Takes average of 20 samples.
+//Calibrates the gyro over 1 second, no delay, , setting the null voltage. Takes average of 20 samples.
 void Gyro::calibrate(){
     _isOn = true;
     _calibrateCount = 0;
@@ -64,5 +73,11 @@ void Gyro::_calibrate(){
 void Gyro::sample(){
     degrees += (_input - nullVoltage) * DEGREES_PER_ANALOG_IN_UNIT;
 }
-*/
+
+void Gyro::sampleWithCallback(){
+	  degrees += (_input - nullVoltage) * DEGREES_PER_ANALOG_IN_UNIT;
+		_per_sample_callback();
+}
+
+
 

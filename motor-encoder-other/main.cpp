@@ -1,6 +1,5 @@
 #include "mbed.h"
-#include "pin_assignments.h"
-
+#include "drive_control.h"
 
 
 //Exported from mbed for use with local Keli compiler (the mbed compiler)
@@ -8,7 +7,6 @@
 
 //Everything is in the same folder because I had them in that way on mbed. 
 //motor/encoder/pin_assignemnt and this file are the only ones fully tested
-
 
 
 DigitalIn user_button(USER_BUTTON);
@@ -36,7 +34,7 @@ void printStatus(){
 }
 
 int main() {
-  pc.printf("\r\nHi!\r\n");
+  pc.printf("\r\nHi! Built with keil\r\n");
   
   //leftChannelA.rise(&leftGotPulse);
   //rightChannelA.rise(&rightGotPulse);

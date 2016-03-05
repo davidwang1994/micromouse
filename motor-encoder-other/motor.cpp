@@ -2,43 +2,39 @@
 
 
 
+
+
+
+
+
+
 Ticker motorInOperation; //Ticker to for async driving
-bool locked = false; //Motor is locked for driving, or not --- alternatively could just use global state without need for lock object (maybe).
 
 
 void stop(){
-    if (!locked){
-        leftMotor.stop();
-        rightMotor.stop();
-    }
+		leftMotor.stop();
+		rightMotor.stop();
 }
 
 
 void turn(float speed) {
-    if (!locked){
-        leftMotor.speed(speed);
-        rightMotor.speed(-speed);
-    }
+		leftMotor.speed(speed);
+		rightMotor.speed(-speed);
 }
 
 void drive(float speed){
-    if (!locked){
-        leftMotor.speed(speed);
-        rightMotor.speed(speed);
-    }
+		leftMotor.speed(speed);
+		rightMotor.speed(speed);
 }
 
 
 
 
 void drive(float speed, int distance, void(*callback)(void)){
-    if (!locked){
         resetEncoders();
         DriveLock lock (distance, speed, callback);
         drive(speed);
-        locked = true;
         motorInOperation.attach(&lock, &DriveLock::drive, 0.001); //Checks every milisecond
-    }
 }
 
 

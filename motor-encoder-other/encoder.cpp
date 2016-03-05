@@ -1,7 +1,5 @@
 #include "encoder.h"
 
-
-
 /*
 Reset both encoders
 */

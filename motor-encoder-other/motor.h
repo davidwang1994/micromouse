@@ -3,14 +3,20 @@
 
 #include "mbed.h"
 #include "encoder.h"
+#include "gyro.h"
+
+
+
+
+
 
 //Stops the motors without breaking. Breaking may or may not be necessary pending test; just assume its mostly a complete stop for now
 void stop();
 
-/*
-Set motors to turn in place with given speed setting. -1.0 to 1.0. Positive is RIGHT. Negative is LEFT.
-*/
+
+//Set motors to turn in place with given speed setting. -1.0 to 1.0. Positive is RIGHT. Negative is LEFT.
 void turn(float speed);
+
 
 //Set motors to drive forwards or backwards at given speed. Speed is a float between -1.0 and 1.0, positive for forwards and negative for backwards
 void drive(float speed);

@@ -4,7 +4,7 @@
  *      *** Do not modify ! ***
  *
  * Project: 'Micromouse_test' 
- * Target:  'mbed NUCLEO_F411RE' 
+ * Target:  'mbed NUCLEO_F401RE' 
  */
 
 #ifndef RTE_COMPONENTS_H

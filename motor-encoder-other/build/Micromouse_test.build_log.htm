@@ -21,62 +21,63 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.18.0
 Dialog DLL:      TCM.DLL V1.14.8.0
  
 <h2>Project:</h2>
-C:\Users\SouICry\Desktop\micromouse\micromouse\motor-encoder-other\Micromouse_test.uvprojx
-Project File Date:  02/13/2016
+C:\Users\SouICry\Desktop\Micromouse_test\Micromouse_test.uvprojx
+Project File Date:  02/16/2016
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
-Build target 'mbed NUCLEO_F411RE'
-compiling ir.cpp...
-ir.cpp(21): warning:  #1-D: last line of file ends without a newline
-  }*/
-ir.cpp: 1 warning, 0 errors
-compiling gyro.cpp...
-compiling encoder.cpp...
-mbed/TARGET_NUCLEO_F411RE/TARGET_STM/TARGET_STM32F4/TARGET_NUCLEO_F411RE/PeripheralNames.h(58): error:  #20: identifier "SPI5_BASE" is undefined
-      SPI_5 = (int)SPI5_BASE
-encoder.h(50): warning:  #1-D: last line of file ends without a newline
-  #endif 
-encoder.cpp: 1 warning, 1 error
-compiling motor.cpp...
-mbed/TARGET_NUCLEO_F411RE/TARGET_STM/TARGET_STM32F4/TARGET_NUCLEO_F411RE/PeripheralNames.h(58): error:  #20: identifier "SPI5_BASE" is undefined
-      SPI_5 = (int)SPI5_BASE
-encoder.h(50): warning:  #1-D: last line of file ends without a newline
-  #endif 
-motor.h(81): warning:  #1-D: last line of file ends without a newline
-  #endif
-motor.cpp: 2 warnings, 1 error
-compiling IO.cpp...
-IO.cpp(7): warning:  #1-D: last line of file ends without a newline
-  */
-IO.cpp: 1 warning, 0 errors
+Build target 'mbed NUCLEO_F401RE'
+compiling drive_control.cpp...
+drive_control.h(31): warning:  #1-D: last line of file ends without a newline
+  void _driveCellDiagonalSpeedRun();
+drive_control.cpp(24): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  		float degreesLeft = gyro + 90.0;
+drive_control.cpp(43): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  		float degreesLeft = 90.0 - gyro;
+drive_control.cpp(63): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  		float degreesLeft = 180.0 - gyro;
+drive_control.cpp: 4 warnings, 0 errors
 compiling main.cpp...
-mbed/TARGET_NUCLEO_F411RE/TARGET_STM/TARGET_STM32F4/TARGET_NUCLEO_F411RE/PeripheralNames.h(58): error:  #20: identifier "SPI5_BASE" is undefined
-      SPI_5 = (int)SPI5_BASE
-IO.h(16): warning:  #1-D: last line of file ends without a newline
-  */
-encoder.h(50): warning:  #1-D: last line of file ends without a newline
-  #endif 
-motor.h(81): warning:  #1-D: last line of file ends without a newline
-  #endif
-pin_assignments.h(18): warning:  #1-D: last line of file ends without a newline
-  //Gyro gyro(A0);
-main.cpp(27): warning:  #1446-D: non-POD class type passed through ellipsis
+drive_control.h(31): warning:  #1-D: last line of file ends without a newline
+  void _driveCellDiagonalSpeedRun();
+main.cpp(21): warning:  #1446-D: non-POD class type passed through ellipsis
+      pc.printf("Left: %i\r\n", leftEncoder);
+main.cpp(25): warning:  #1446-D: non-POD class type passed through ellipsis
       pc.printf("Right: %i\r\n", rightEncoder);
-main.cpp(33): warning:  #1446-D: non-POD class type passed through ellipsis
+main.cpp(31): warning:  #1446-D: non-POD class type passed through ellipsis
       pc.printf("\r\nLeft: %i\r\n", leftEncoder);
-main.cpp(34): warning:  #1446-D: non-POD class type passed through ellipsis
+main.cpp(32): warning:  #1446-D: non-POD class type passed through ellipsis
       pc.printf("Right: %i\r\n", rightEncoder);
-main.cpp: 8 warnings, 1 error
-".\build\Micromouse_test.axf" - 3 Error(s), 12 Warning(s).
+main.cpp: 5 warnings, 0 errors
+linking...
+.\build\Micromouse_test.axf: Error: L6200E: Symbol leftEncoder multiply defined (by drive_control.o and main.o).
+.\build\Micromouse_test.axf: Error: L6200E: Symbol rightEncoder multiply defined (by drive_control.o and main.o).
+.\build\Micromouse_test.axf: Error: L6200E: Symbol leftMotor multiply defined (by drive_control.o and main.o).
+.\build\Micromouse_test.axf: Error: L6200E: Symbol rightMotor multiply defined (by drive_control.o and main.o).
+.\build\Micromouse_test.axf: Error: L6200E: Symbol leftIR1 multiply defined (by drive_control.o and main.o).
+Not enough information to list image symbols.
+Not enough information to list the image map.
+Finished: 2 information, 0 warning and 5 error messages.
+".\build\Micromouse_test.axf" - 5 Error(s), 9 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.4.5.0.pack
+                ARM::CMSIS:CORE:4.3.0
+                CMSIS (Cortex Microcontroller Software Interface Standard)
+   * Component: CORE Version: 4.3.0
 
 <h2>Collection of Component include folders:</h2>
-  C:\Users\SouICry\Desktop\micromouse\micromouse\motor-encoder-other\RTE
+  C:\Users\SouICry\Desktop\Micromouse_test\RTE
+  C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include
   C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.7.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
 
 <h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:4.3.0
 Target not created.
-Build Time Elapsed:  00:00:09
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>
