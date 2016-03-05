@@ -5,20 +5,21 @@
 #include <ctime>
 #include <climits>
 #include <cstdlib>
-//#include <iomanip>
-//#include <iostream>
-//#include <fstream>
 #include <string>
 #include <vector>
 
+#include "../motor-encoder-other/pin_assignments.h"
+
 #define TOP 0
-#define Right 1
-#define Bottom 2
-#define Left 3
+#define RIGHT 1
+#define DOWN 2
+#define LEFT 3
 
 using namespace std;
 
 const int MAZE_SIZE = 16;
+
+int direction = TOP;
 
 class Cell {
 
@@ -38,17 +39,17 @@ public:
 extern Cell *maze[MAZE_SIZE][MAZE_SIZE];
 extern Cell *mazeIn[MAZE_SIZE][MAZE_SIZE];
 
-//int manhattan_dist(int x1, int x2, int y1, int y2)();
-//
-//int min4(int a, int b, int c, int d)();
+int manhattan_dist(int x1, int x2, int y1, int y2);
 
-//void update_distances(vector<Cell*> &stack)();
+int min4(int a, int b, int c, int d);
+
+void update_distances(vector<Cell*> &stack);
 
 
 
 bool fully_explored();
 
-void explore();
+//void explore();
 
 bool is_solved();
 

@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 #ifndef IR_H
 #define IR_H
+=======
+#ifndef __IR_H__
+#define __IR_H__
+>>>>>>> 110ec1ffbc98eaa40298e8309535cf94c691c1a9
 
 #include "mbed.h"
+#include "pin_assignments.h"
+
+const float SENSOR_THRESHOLD = 0.5;
 
 #define IR_SAMPLE_PERIOD 0.001 //once per ms when enabled 
 #define CALIBRATE_SAMPLE_COUNT 20 //Average of 20 
@@ -44,11 +52,13 @@ class IRSensor {
     
     //Get the value in encoder units, samples?... 
     float read();
-    
+
+/
     //Shorthand for read()
     operator float() {
         return read();
     }
+<<<<<<< HEAD
 private:
 		bool _isOn;
 		Ticker _ir_ticker;
@@ -60,15 +70,35 @@ private:
         int _calibrate_count;
         float _calibrate_samples[CALIBRATE_SAMPLE_COUNT];
         void _calibrate();
+=======
+>>>>>>> 110ec1ffbc98eaa40298e8309535cf94c691c1a9
 };
 
-extern IRSensor leftIR1;
-extern IRSensor leftIR2;
-extern IRSensor leftIR3;
-extern IRSensor rightIR1;
-extern IRSensor rightIR2;
-extern IRSensor rightIR3;
+/** set the walls of the current cell by using the IR sensors **/
+    bool has_front_wall() {
+        if (frontIR1 > SENSOR_THRESHOLD && frontIR2 > SENSOR_THRESHOLD) {
+            return true;
+        }
+        return false;
+    }
 
+    bool has_left_wall() {
+        if (leftIR > SENSOR_THRESHOLD) {
+            return true;
+        }
+        return false;
+    }
 
+    bool has_right_wall() {
+        if (rightIR > SENSOR_THRESHOLD) {
+            return true;
+        }
+        return false;
+    }
+
+<<<<<<< HEAD
 #endif
 
+=======
+#endif
+>>>>>>> 110ec1ffbc98eaa40298e8309535cf94c691c1a9
