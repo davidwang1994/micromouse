@@ -1,6 +1,6 @@
 #include "motor.h"
 
-
+bool locked = false;
 
 
 

@@ -69,7 +69,7 @@ void IRSensor::_calibrate(){
 
 //TODO: convert to distance using constants to be tested
 float IRSensor::read(){
-	
+		
 	
 		
 		return raw_value;

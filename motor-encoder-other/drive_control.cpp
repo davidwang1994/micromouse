@@ -1,3 +1,4 @@
+/*
 #include "drive_control.h"
 
 
@@ -76,7 +77,12 @@ void _turnAround(){
 		}
 }
 
-void driveOneCell(){
+
+void driveCell(){
+		resetEncoders();
 		
+	
+	
 }
 
+*/

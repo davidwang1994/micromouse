@@ -22,43 +22,40 @@ Dialog DLL:      TCM.DLL V1.14.8.0
  
 <h2>Project:</h2>
 C:\Users\SouICry\Desktop\Micromouse_test\Micromouse_test.uvprojx
-Project File Date:  02/16/2016
+Project File Date:  02/22/2016
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'mbed NUCLEO_F401RE'
-compiling drive_control.cpp...
-drive_control.h(31): warning:  #1-D: last line of file ends without a newline
-  void _driveCellDiagonalSpeedRun();
-drive_control.cpp(24): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  		float degreesLeft = gyro + 90.0;
-drive_control.cpp(43): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  		float degreesLeft = 90.0 - gyro;
-drive_control.cpp(63): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  		float degreesLeft = 180.0 - gyro;
-drive_control.cpp: 4 warnings, 0 errors
+compiling motor.cpp...
+compiling encoder.cpp...
+compiling ir.cpp...
+compiling pin_assignments.cpp...
+pin_assignments.cpp(37): warning:  #1-D: last line of file ends without a newline
+  */
+pin_assignments.cpp: 1 warning, 0 errors
+compiling gyro.cpp...
+gyro.cpp(74): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      degrees += (_input - nullVoltage) * 
+EGREES_PER_ANALOG_IN_UNIT;
+gyro.cpp(78): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  	  degrees += (_input - nullVoltage) * 
+EGREES_PER_ANALOG_IN_UNIT;
+gyro.cpp: 2 warnings, 0 errors
 compiling main.cpp...
-drive_control.h(31): warning:  #1-D: last line of file ends without a newline
-  void _driveCellDiagonalSpeedRun();
-main.cpp(21): warning:  #1446-D: non-POD class type passed through ellipsis
+main.cpp(83): warning:  #1446-D: non-POD class type passed through ellipsis
       pc.printf("Left: %i\r\n", leftEncoder);
-main.cpp(25): warning:  #1446-D: non-POD class type passed through ellipsis
+main.cpp(87): warning:  #1446-D: non-POD class type passed through ellipsis
       pc.printf("Right: %i\r\n", rightEncoder);
-main.cpp(31): warning:  #1446-D: non-POD class type passed through ellipsis
+main.cpp(93): warning:  #1446-D: non-POD class type passed through ellipsis
       pc.printf("\r\nLeft: %i\r\n", leftEncoder);
-main.cpp(32): warning:  #1446-D: non-POD class type passed through ellipsis
+main.cpp(94): warning:  #1446-D: non-POD class type passed through ellipsis
       pc.printf("Right: %i\r\n", rightEncoder);
-main.cpp: 5 warnings, 0 errors
+main.cpp: 4 warnings, 0 errors
 linking...
-.\build\Micromouse_test.axf: Error: L6200E: Symbol leftEncoder multiply defined (by drive_control.o and main.o).
-.\build\Micromouse_test.axf: Error: L6200E: Symbol rightEncoder multiply defined (by drive_control.o and main.o).
-.\build\Micromouse_test.axf: Error: L6200E: Symbol leftMotor multiply defined (by drive_control.o and main.o).
-.\build\Micromouse_test.axf: Error: L6200E: Symbol rightMotor multiply defined (by drive_control.o and main.o).
-.\build\Micromouse_test.axf: Error: L6200E: Symbol leftIR1 multiply defined (by drive_control.o and main.o).
-Not enough information to list image symbols.
-Not enough information to list the image map.
-Finished: 2 information, 0 warning and 5 error messages.
-".\build\Micromouse_test.axf" - 5 Error(s), 9 Warning(s).
+Program Size: Code=22164 RO-data=2468 RW-data=132 ZI-data=3944  
+After Build - User command #1: fromelf --bin -o build\Micromouse_test_NUCLEO_F401RE.bin build\Micromouse_test.axf
+".\build\Micromouse_test.axf" - 0 Error(s), 7 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -76,8 +73,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:4.3.0
-Target not created.
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:31
 </pre>
 </body>
 </html>

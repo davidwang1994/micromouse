@@ -139,8 +139,6 @@
 .\build\main.o: mbed\wait_api.h
 .\build\main.o: mbed\sleep_api.h
 .\build\main.o: mbed\rtc_time.h
-.\build\main.o: drive_control.h
-.\build\main.o: pin_assignments.cpp
 .\build\main.o: IO.h
 .\build\main.o: motor.h
 .\build\main.o: encoder.h
