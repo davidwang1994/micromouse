@@ -1,0 +1,13 @@
+*.iml
+.idea/
+Debug
+Release
+micromouse_vs.cpp
+micromouse_vs.h
+micromouse.vcxproj.filters
+micromouse.vcxproj
+stdafx.cpp
+stdafx.h
+targetver.h
+*/build/*
+build/*
