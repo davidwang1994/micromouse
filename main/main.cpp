@@ -1,3 +1,14 @@
+/*
+Notes: 
+- About IR unit conversion: 
+	 hasWallXDistanceAway can be determined by values within given range (cutoffs precomputed)
+	 PID does not require extremely accurate approximations, as long as the relative values for left/right are same. Raw data would work, as will inverse graph with cutoff
+	 PID against forwards wall should be fine with an invers graph with cutoff 
+	
+
+
+*/
+
 #include "mbed.h"
 //#include "drive_control.h"
 //#include "pin_assignments.cpp"
@@ -14,8 +25,8 @@
 
 //Encoder and motor channels are mirrowed for left/right to ensure positive is forwards. 
 //If in the end it is all negative, 
-Motor leftMotor(D9, D10, D11); 
-Motor rightMotor(D12, D13, D14); 
+Motor leftMotor(D9, D10); 
+Motor rightMotor(D12, D11); 
 Encoder leftEncoder(D7, D8); 
 Encoder rightEncoder(D6, D5); 
 
@@ -106,7 +117,7 @@ int main() {
   speed = 0.0f;
   
   ticker.attach(&printStatus, 0.5);
-  
+  enableIR();
   while(1){
     if (user_button == 0 && !pressed){
         pressed = true;

@@ -3,11 +3,6 @@
 bool locked = false;
 
 
-
-
-
-
-
 Ticker motorInOperation; //Ticker to for async driving
 
 
@@ -27,9 +22,6 @@ void drive(float speed){
 		rightMotor.speed(speed);
 }
 
-
-
-
 void drive(float speed, int distance, void(*callback)(void)){
         resetEncoders();
         DriveLock lock (distance, speed, callback);
@@ -37,22 +29,27 @@ void drive(float speed, int distance, void(*callback)(void)){
         motorInOperation.attach(&lock, &DriveLock::drive, 0.001); //Checks every milisecond
 }
 
-
-
 //Defines a motor and its basic methods
-Motor::Motor(PinName _pwm, PinName _fwd, PinName _rev):
-        pwm(_pwm), fwd(_fwd), rev(_rev) {
+Motor::Motor(PinName _pwm, PinName _dir):
+        pwm(_pwm), dir(_dir){
             
     pwm.period(0.001);
     pwm = 0; 
-    fwd = 0;
-    rev = 0;
+    dir = 0;
 }
+				
 void Motor::speed(float speed) {
-    fwd = speed > 0.0f;
-    rev = speed < 0.0f;
-    pwm = abs(speed);  //The one and only way to control power output with PWM is by setting the duty cycle, aka relative width. PFM is modulation of frequency, PWM is width.
+		if (speed < 0.0f){ //Backwards
+				dir = 1;
+				pwm = speed + 1.0f; // Inverts it so 1 is off and 0 is on
+		}
+		else { 
+				//Forwards
+				dir = 0;
+				pwm = speed;
+		}
 }
+
 void Motor::stop() {
     speed(0.0);
 }
