@@ -57,7 +57,7 @@ public:
     }
 		
 private:
-		PwmOut pwm;
+		PwmOut pwm_pin;
     DigitalOut dir;
 };
 
@@ -66,29 +66,5 @@ private:
 
 extern Motor leftMotor;
 extern Motor rightMotor;
-
-
-extern Ticker motorInOperation; //Ticker to for async driving
-extern bool locked; //Motor is locked for driving, or not --- alternatively could just use global state without need for lock object (maybe).
-
-
-//Lock class for driving --- TODO(maybe): expand to motor and encoder lock since encoder cannot be reset.
-class DriveLock {
-    int _distance;
-    float _speed;
-    void(*_callback)(void);
-public:
-    DriveLock(int distance, float speed, void(*callback)(void)) : _distance(distance), _speed(speed), _callback(callback){}
-    void drive(void) {
-        if (getEncoderDistance() >= _distance){
-            locked = false;
-            stop();
-            motorInOperation.detach();
-            if (_callback != 0){
-                _callback();
-            }
-        }
-    }
-};
 
 #endif

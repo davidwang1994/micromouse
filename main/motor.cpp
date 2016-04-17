@@ -22,31 +22,26 @@ void drive(float speed){
 		rightMotor.speed(speed);
 }
 
-void drive(float speed, int distance, void(*callback)(void)){
-        resetEncoders();
-        DriveLock lock (distance, speed, callback);
-        drive(speed);
-        motorInOperation.attach(&lock, &DriveLock::drive, 0.001); //Checks every milisecond
-}
+
 
 //Defines a motor and its basic methods
-Motor::Motor(PinName _pwm, PinName _dir):
-        pwm(_pwm), dir(_dir){
+Motor::Motor(PinName _pwm_pin, PinName _dir):
+        pwm_pin(_pwm_pin), dir(_dir){
             
-    pwm.period(0.001);
-    pwm = 0; 
+    pwm_pin.period(0.001);
+    pwm_pin = 0; 
     dir = 0;
 }
 				
 void Motor::speed(float speed) {
 		if (speed < 0.0f){ //Backwards
 				dir = 1;
-				pwm = speed + 1.0f; // Inverts it so 1 is off and 0 is on
+				pwm_pin = speed + 1.0f; // Inverts it so 1 is off and 0 is on
 		}
 		else { 
 				//Forwards
 				dir = 0;
-				pwm = speed;
+				pwm_pin = speed;
 		}
 }
 
