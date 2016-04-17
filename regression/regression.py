@@ -33,6 +33,14 @@ b = fit_poly_func(X, Y, d)
 Y_fit = apply_poly_func(X, b)
 print b
 
+outf = open("coeff.txt", 'w')
+outf.write(str(b))
+outf.close()
+
+
+'''
+Code used to generate plots
+
 X_ = np.arange(0, 1, 0.01)
 Y_ = apply_poly_func(X_, b)
 
@@ -45,3 +53,4 @@ plt.plot(X_, Y_, 'y-', label="Inverse deg=" + str(d) + " Function")
 
 plt.legend()
 plt.show()
+'''
