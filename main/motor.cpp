@@ -3,8 +3,6 @@
 bool locked = false;
 
 
-Ticker motorInOperation; //Ticker to for async driving
-
 
 void stop(){
 		leftMotor.stop();
