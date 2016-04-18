@@ -10,10 +10,9 @@ Notes:
 */
 
 #include "mbed.h"
+#define CELL_DISTANCE   16384 //Encoder units, TO BE TESTED
 //#include "drive_control.h"
 //#include "pin_assignments.cpp"
-
-
 #include "IO.h"
 #include "motor.h"
 #include "encoder.h"
@@ -30,7 +29,6 @@ Motor rightMotor(D12, D11);
 Encoder leftEncoder(D7, D8); 
 Encoder rightEncoder(D6, D5); 
 
-
 //Sensors
 //Gyro gyro(A0);
 IRSensor leftIR1(D15, A1);
@@ -40,21 +38,14 @@ IRSensor rightIR1(D15, A2);
 IRSensor rightIR2(D14, A2);
 IRSensor rightIR3(D13, A2);
 
-
-
-
-
-#define CELL_DISTANCE		16384 //Encoder units, TO BE TESTED
-
-
 //Control code for exploration. Callbacks are run after each finishes if given
-void turnLeft(void(*callback)(void) = NULL);
-void turnRight(void(*callback)(void) = NULL);
-void turnAround(void(*callback)(void) = NULL);
-void driveCell(void(*callback)(void) = NULL);
+void turnLeft();
+void turnRight();
+void turnAround();
+void driveCell();
 
 //Control code for speed runs. Callbacks are run after each finishes if given
-void turnLeftSpeedRun(void(*callback)(void) = NULL);
+/**void turnLeftSpeedRun(void(*callback)(void) = NULL);
 void turnRightSpeedRun(void(*callback)(void) = NULL);
 void driveCellSpeedRun(void(*callback)(void) = NULL);
 void driveCellDiagonalSpeedRun(void(*callback)(void) = NULL);
@@ -68,12 +59,57 @@ void _driveCell();
 void _turnLeftSpeedRun();
 void _turnRightSpeedRun();
 void _driveCellSpeedRun();
-void _driveCellDiagonalSpeedRun();
+void _driveCellDiagonalSpeedRun(); **/
 
+// Motor Controller Code
+    // 85mm diameters
+    // 40:8 gear ratio
+    // wheel diameter: 24mm
+    // 42.5mm
+    // Turn circumference 85pi
+    // Wheel circumference 24pi
+    // 0.885 rotations/90degrees
+    // 0.885 * 40/8 * 512 * 2 =
+    // 4531 encoder units/90 degrees
+Timer timeWithinCutoff = 0;   //Done turning if within angleCutoff for longer than timeCutoff
+// Constants to define to calc. Will be refactored.
+const float countsPerRotation = 1400; // To be verified
+const float gearRatio = 40.0/8.0;   // 40:8 gear ratio  
+const float wheelSize = 24.0;     // wheel diameter = 24mm
+const float pi = 3.141593;
+const float inchesPerRotation = pi * wheelSize * gearRatio;
+const float countsPerInch = countsPerRotation / inchesPerRotation;
+const float countsPerDegree = 25;   // Will be refactored during testing. Assume 25 degrees.
 
+// * Find the angle precision using encoders
+// Degrees -> positive
+// Power -> controls direction
+void turn(float degrees, int power){
+  int count;            
+  count = (degrees * countsPerDegree + 1/2);  // Adding offset for testing purposes.s
+  resetEncoders();
+  
+  leftMotor.speed(power);
+  rightMotor.speed(-power);
+  
+  while (getEncoderDistance() < count){
+    // if the precision is reached, break out of the loop
+    // Do nothing
+  }
+  leftMotor.stop();
+  rightMotor.stop();
+  
+}
+void turnRight(){
+  
+  turn(90, 100);
+}
 
-
-
+// Controls the left turn. Uses the PID and the 
+// encoder to ensure precision.
+void turnLeft(){
+  turn(90, -100);
+}
 
 
 
@@ -134,7 +170,7 @@ int main() {
             case 7: speed = -1.0f; motorState = -1; break;
         }
         motorState++;
-        drive(speed);
+    //    drive(speed);
     }
     else if (user_button == 1){
         pressed = false;

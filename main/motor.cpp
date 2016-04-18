@@ -1,4 +1,5 @@
 #include "motor.h"
+<<<<<<< HEAD
 
 bool locked = false;
 
@@ -22,6 +23,8 @@ void drive(float speed){
 
 
 
+=======
+>>>>>>> Austin
 //Defines a motor and its basic methods
 Motor::Motor(PinName _pwm_pin, PinName _dir):
         pwm_pin(_pwm_pin), dir(_dir){
@@ -46,7 +49,5 @@ void Motor::speed(float speed) {
 void Motor::stop() {
     speed(0.0);
 }
-
-
 
 
