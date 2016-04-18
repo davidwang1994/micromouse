@@ -1,30 +1,5 @@
 #include "motor.h"
-<<<<<<< HEAD
 
-bool locked = false;
-
-
-
-void stop(){
-		leftMotor.stop();
-		rightMotor.stop();
-}
-
-
-void turn(float speed) {
-		leftMotor.speed(speed);
-		rightMotor.speed(-speed);
-}
-
-void drive(float speed){
-		leftMotor.speed(speed);
-		rightMotor.speed(speed);
-}
-
-
-
-=======
->>>>>>> Austin
 //Defines a motor and its basic methods
 Motor::Motor(PinName _pwm_pin, PinName _dir):
         pwm_pin(_pwm_pin), dir(_dir){
