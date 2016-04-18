@@ -67,14 +67,6 @@ private:
 extern Motor leftMotor;
 extern Motor rightMotor;
 
-<<<<<<< HEAD
-=======
 
-extern Ticker motorInOperation; //Ticker to for async driving
-extern bool locked; //Motor is locked for driving, or not --- alternatively could just use global state without need for lock object (maybe).
-
-
-
->>>>>>> Austin
 #endif
 
