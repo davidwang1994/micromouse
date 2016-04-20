@@ -150,23 +150,19 @@ void _drive_cell(){
 		//PID for staying in middle
 		float errorP, errorD;
 		//Seeing both left and right wall
-		if(hasLeftWall() && hasRightWall())
-		{ 
+		if(hasLeftWall() && hasRightWall()){ 
 				errorP = rightIR1 - leftIR1;
 		}   	 
 		//only sees left wall
-		else if(hasLeftWall())
-		{
+		else if(hasLeftWall()){
 				errorP = 2 * (leftIRMiddleValue - leftIR1);
 		}
 		//only sees right wall
-		else if((hasRightWall()))
-		{
+		else if((hasRightWall())){
 				errorP = 2 * (rightIRMiddleValue - rightIR1);
 		}
 		//no walls, use encoder
-		else
-		{
+		else {
 				errorP = (rightEncoder - leftEncoder) * ENCODER_TO_IR_CONVERSION_FACTOR; 
 		}
 		
