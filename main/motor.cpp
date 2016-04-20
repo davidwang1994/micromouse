@@ -1,25 +1,5 @@
 #include "motor.h"
 
-bool locked = false;
-
-
-
-void stop(){
-		leftMotor.stop();
-		rightMotor.stop();
-}
-
-//4531 encoder units/90 degrees turn
-void turn(float speed) {
-		leftMotor.speed(speed);
-		rightMotor.speed(-speed);
-}
-
-void drive(float speed){
-		leftMotor.speed(speed);
-		rightMotor.speed(speed);
-}
-
 
 
 //Defines a motor and its basic methods

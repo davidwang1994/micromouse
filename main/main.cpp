@@ -199,6 +199,62 @@ void _drive_cell(){
 
 
 
+// Motor Controller Code
+    // 85mm diameters
+    // 40:8 gear ratio
+    // wheel diameter: 24mm
+    // 42.5mm
+    // Turn circumference 85pi
+    // Wheel circumference 24pi
+    // 0.885 rotations/90degrees
+    // 0.885 * 40/8 * 512 * 2 =
+    // 4531 encoder units/90 degrees
+Timer timeWithinCutoff = 0;   //Done turning if within angleCutoff for longer than timeCutoff
+// Constants to define to calc. Will be refactored.
+const float countsPerRotation = 1400; // To be verified
+const float gearRatio = 40.0/8.0;   // 40:8 gear ratio  
+const float wheelSize = 24.0;     // wheel diameter = 24mm
+const float pi = 3.141593;
+const float inchesPerRotation = pi * wheelSize * gearRatio;
+const float countsPerInch = countsPerRotation / inchesPerRotation;
+const float countsPerDegree = 25;   // Will be refactored during testing. Assume 25 degrees.
+
+// * Find the angle precision using encoders
+// Degrees -> positive
+// Power -> controls direction
+void turn(float degrees, int power){
+  int count;            
+  count = (degrees * countsPerDegree + 1/2);  // Adding offset for testing purposes.s
+  resetEncoders();
+  
+  leftMotor.speed(power);
+  rightMotor.speed(-power);
+  
+  while (getEncoderDistance() < count){
+    // if the precision is reached, break out of the loop
+    // Do nothing
+  }
+  leftMotor.stop();
+  rightMotor.stop();
+  
+}
+void turnRight(){
+  
+  turn(90, 100);
+}
+
+// Controls the left turn. Uses the PID and the 
+// encoder to ensure precision.
+void turnLeft(){
+  turn(90, -100);
+}
+
+
+
+
+
+
+
 //Everything is in the same folder because I had them in that way on mbed. 
 //motor/encoder/pin_assignemnt and this file are the only ones fully tested
 
