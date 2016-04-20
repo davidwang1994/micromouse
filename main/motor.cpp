@@ -9,7 +9,7 @@ void stop(){
 		rightMotor.stop();
 }
 
-
+//4531 encoder units/90 degrees turn
 void turn(float speed) {
 		leftMotor.speed(speed);
 		rightMotor.speed(-speed);
