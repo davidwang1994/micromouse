@@ -1,9 +1,6 @@
 Project Structure
 Main
  - IR -> Maze -> Motor-Control <-> PID
-   ^				    ^
-   |			 	    |
-   ----------------------------------
 
 Maze
  - manhattan_dist()
@@ -18,10 +15,10 @@ Motor-Control
  - turn_around()
  - stop()
 
- - Motor
-   - speed()
-   - turn()
-   - stop()
+- Motor
+- speed()
+- turn()
+- stop()
 
 IR
  - has_front_wall()
