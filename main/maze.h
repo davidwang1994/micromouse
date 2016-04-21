@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "../motor-encoder-other/pin_assignments.h"
+
 #define TOP 0
 #define RIGHT 1
 #define DOWN 2
