@@ -3,72 +3,79 @@
 
 #include "mbed.h"
 
-#define IR_SAMPLE_PERIOD 0.001 //once per ms when enabled 
-#define CALIBRATE_SAMPLE_COUNT 20 //Average of 20 
 
-//Has wall directly forwards/left/right of mouse (wall is less than 1 cell away). Does not require to be at center of cell, just has to be within it and not too close to walls.
-bool has_wall();
-bool has_left_wall(); 
+DigitalOut IRLEDTX6_R (PH_0);
+DigitalOut IRLEDTX5_RD (PH_1);
+DigitalOut IRLEDTX4_RF (PC_0);
+DigitalOut IRLEDTX3_LF (PC_1);
+DigitalOut IRLEDTX2_LD (PC_2);
+DigitalOut IRLEDTX1_L (PC_3);
+
+AnalogIn irLedRX6_R(PA_4);
+AnalogIn irLedRX5_RD(PA_5);
+AnalogIn irLedRX4_RF(PA_6);
+AnalogIn irLedRX3_LF(PA_7);
+AnalogIn irLedRX2_LD(PC_4);
+AnalogIn irLedRX1_L(PC_5);
+
+Serial pc(PA_2, PA_3);
+
+public:
+
+/*
+ * has_wall
+ * Parameters: float, distance in cm
+ * 	       wall_direction, char: 'l', 'r', 'f'
+ * Returns: 0 if no wall is detected in that area
+ * 	    1 if wall is within 1 cell distance
+ *  	    2 if wall is within 2 cell distances
+ * 	    3 if wall is within 3 cell distances
+ */
+int has_wall(float dist, char wall_direction);
+
+/*
+ * has_left_wall
+ * Parameters: none
+ * Returns: boolean, if there is a left wall detected or not, for PID control
+ */
+bool has_left_wall();
+
+/*
+ * has_right_wall
+ * Parameters: none
+ * Returns: boolean, if there is a right wall detected or not, for PID control
+ */
 bool has_right_wall();
 
-//Has a wall this many cells away (0 for immediately in this cell)
-int wall_distance();
-int left_wall_distance();
-int right_wall_distance();
+//bool has_front_wall();
 
-//Forward wall is this many encoder units away (averages the 2 sensors). Possibly used for controlling drive.
-int forwards_distance();
+/*
+ * ir_to_dist
+ * Internal method, called by front_wall_dist, left_wall_dist, and right_wall_dist
+ * Parameters: float, irVal from front_wall_dist
+ * Returns: float, distance in cm from wall
+ */
+float ir_to_dist(float irVal);
 
-//Enables sampling at given period for front and side IRSensors
-void enableIR();
+/*
+ * front_wall_dist
+ * Parameters: None
+ * Returns: float, distance in cm from FRONT WALL
+ */
+float front_wall_dist();
 
-//Units of IRSensor read is linearized distance away in encoder units
-class IRSensor {
-	public:
-   	DigitalOut _enable;
-    AnalogIn _input;
-   
-    volatile float raw_value; //Currently read value
-    float _baseline; //Ambient value
-    
-    IRSensor(PinName enable, PinName input);
-    
-    //Enables sampling for this IRSensor. Give it 
-    void enable();
-    
-    //Disables sampling for this IRSensor
-    void disable();
-    
-    //Calibrate it (set baseline). Give it ~25 ms to run before reading. Currently called on init
-    void calibrate();
-    
-    //Get the value in encoder units, samples?... 
-    float read();
-    
-    //Shorthand for read()
-    operator float() {
-        return read();
-    }
-private:
-		bool _isOn;
-		Ticker _ir_ticker;
-        
-        //Samples and stores the raw value once
-		void _sample();
-        
-        //Calibration internal content
-        int _calibrate_count;
-        float _calibrate_samples[CALIBRATE_SAMPLE_COUNT];
-        void _calibrate();
-};
+/*
+ * left_wall_dist
+ * Parameters: None
+ * Returns: float, distance in cm from LEFT WALL
+ */
+float left_wall_dist();
 
-extern IRSensor leftIR1;
-extern IRSensor leftIR2;
-extern IRSensor leftIR3;
-extern IRSensor rightIR1;
-extern IRSensor rightIR2;
-extern IRSensor rightIR3;
-
+/*
+ * right_wall_dist
+ * Parameters: None
+ * Returns: float, distance in cm from RIGHT WALL
+ */
+float right_wall_dist();
 
 #endif
-
