@@ -3,25 +3,6 @@
 
 #include "mbed.h"
 
-
-DigitalOut IRLEDTX6_R (PH_0);
-DigitalOut IRLEDTX5_RD (PH_1);
-DigitalOut IRLEDTX4_RF (PC_0);
-DigitalOut IRLEDTX3_LF (PC_1);
-DigitalOut IRLEDTX2_LD (PC_2);
-DigitalOut IRLEDTX1_L (PC_3);
-
-AnalogIn irLedRX6_R(PA_4);
-AnalogIn irLedRX5_RD(PA_5);
-AnalogIn irLedRX4_RF(PA_6);
-AnalogIn irLedRX3_LF(PA_7);
-AnalogIn irLedRX2_LD(PC_4);
-AnalogIn irLedRX1_L(PC_5);
-
-Serial pc(PA_2, PA_3);
-
-public:
-
 /*
  * has_wall
  * Parameters: float, distance in cm
@@ -77,5 +58,68 @@ float left_wall_dist();
  * Returns: float, distance in cm from RIGHT WALL
  */
 float right_wall_dist();
+
+
+class IRSensor {
+	private:
+    	float last_read[5];
+    	
+	public:
+   	DigitalOut _enable;
+    AnalogIn _input;
+   
+    volatile float raw_value; //Currently read value
+    float _baseline; //Ambient value
+    
+    IRSensor::IRSensor(PinName enable, PinName input) : _enable(enable), _input(input){}
+    
+    //Get the value in encoder units, samples?... 
+    float read(){
+	    	
+		float sum = 0;
+	
+		//Each duration takes 100us, 5 times = 0.5ms
+		for (int i = 0; i < 5; i++)
+		{
+			//Turn on IR LED tx
+			_enable = 1;
+	
+			//Wait for capacitor to fire, 10us
+			wait_us(10);
+			last_read[i] = _input;
+			sum += _input;
+	
+			//Wait 5us for turning off IR LED tx
+			wait_us(5);
+			_enable = 0;
+	
+			//Wait 85us for turning on IR LED tx
+			wait_us(85);
+		}
+			
+		return ir_to_dist(sum/5.0f);
+    }
+    
+    float[] get_last_readings(){
+    	return last_read;
+    }
+    
+    //Shorthand for read()
+    operator float() {
+        return read();
+    }
+
+};
+
+extern IRSensor IRLED6_R;
+extern IRSensor IRLED5_RD;
+extern IRSensor IRLED4_RF;
+extern IRSensor IRLED3_LF;
+extern IRSensor IRLED2_LD;
+extern IRSensor IRLED1_L;
+
+
+
+
 
 #endif
