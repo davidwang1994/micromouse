@@ -13,11 +13,11 @@ def fit_poly_func(X, Y, d):
     Ainv = np.linalg.pinv(A)
     return np.dot(Ainv, Y)
 
-def apply_poly_func(X, coef):
+def apply_poly_func(X, coeff):
     Y = 0
-    mid = len(coef) / 2
+    mid = len(coeff) / 2
     for i in range(-mid, mid+1):
-        Y += coef[i]*X**i
+        Y += coeff[i]*X**i
     return Y
 
 data = sio.loadmat('measurements.mat')
@@ -29,20 +29,22 @@ X = np.array([float(x[0]) for x in X])
 Y = np.array([float(y[0]) for y in Y])
 
 d = 3
-b = fit_poly_func(X, Y, d)
-Y_fit = apply_poly_func(X, b)
-print b
+coeff = fit_poly_func(X, Y, d)
+# remove brackets from the list after converting it to a string
+print list(coeff)
+print coeff
+Y_fit = apply_poly_func(X, coeff)
 
 outf = open("coeff.txt", 'w')
-outf.write(str(b))
+for c in coeff:
+    outf.write(str(c)+'\n')
 outf.close()
 
-
 '''
-Code used to generate plots
+#Code used to generate plots
 
 X_ = np.arange(0, 1, 0.01)
-Y_ = apply_poly_func(X_, b)
+Y_ = apply_poly_func(X_, coeff)
 
 plt.figure()
 

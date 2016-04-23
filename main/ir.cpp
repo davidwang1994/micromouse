@@ -228,3 +228,23 @@ bool ir::has_right_wall()
 	else
 		return false;
 }
+void ir::read_coeff_values() {
+	FILE *file= fopen(coeff_file_path, "r");
+ 	int i = 0;
+	for (i = 0; i < num_coeff_values; i++) {
+		fscanf(file, "%lf", coeff[i]);
+	}
+	for (i = 0; i < num_coeff_values; i++) {
+		printf("%f", coeff[i]);
+	}
+	wait(0.5);
+	fclose(file);
+}
+
+void ir::ir2dist(Ir ir) {
+	int dist = 0
+	for (int i = 0; i < num_coeff_values; i++) {
+		dist = coeff[i] * pow(dist, -3+i);
+	}
+	return dist;
+}

@@ -3,6 +3,10 @@
 
 #include "mbed.h"
 
+int num_coeff_values = 7;
+char *coeff_file_path = "../regression/coeff.txt";
+float coeff[num_coeff_values];
+
 /*
  * has_wall
  * Parameters: float, distance in cm
@@ -59,6 +63,7 @@ float left_wall_dist();
  */
 float right_wall_dist();
 
+void read_coeff_values();
 
 class IRSensor {
 	private:

@@ -1,7 +1,5 @@
+#include "ir.h"
 #include "maze.h"
-#include "../motor-encoder-other/ir.h"
-//#include "maze_generator.h"
-
 
 Cell *maze[MAZE_SIZE][MAZE_SIZE];
 Cell *mazeIn[MAZE_SIZE][MAZE_SIZE];
@@ -83,159 +81,19 @@ void init_maze() {
             }
         }
     }
-
-//    for(int i = 0; i < MAZE_SIZE; i++){
-//        for(int j = 0; j < MAZE_SIZE; j++){
-//            cout<< " ( " << i << " , " << j << " ):  " << maze[i][j]->dist << endl;
-//        }
-//    }
-
-    //cout << "size of the matrix is: "<< sizeof(maze) << endl;
 }
 
-/*
-* Initializes Cell * maze from given maze text file (formatted similar to http://www.tcp4me.com/mmr/mazes/)
-* Assumes 33*33 text grid in file and only checks first 32 rows and for - | ' ' at their correct positions
-* A new cell constructor was added for just posiiton and walls.
-
-void load_maze(string file_name) {
-    ifstream file(file_name);
-    string top, right;
-    int row = MAZE_SIZE - 1;
-    while (row >= 0) {
-        getline(file, top);
-        getline(file, right);
-        for (int col = 0; col < MAZE_SIZE; col++) {
-            maze[row][col] = new Cell(row, col, top[(col * 2) + 1] == '-', right[(col * 2) + 2] == '|');
-        }
-        row--;
-    }
-
-    int goal1 = MAZE_SIZE / 2;
-    int goal2 = (MAZE_SIZE - 1) / 2;
-    for (int i = 0; i < MAZE_SIZE; i++) {
-      for (int j = 0; j < MAZE_SIZE; j++) {
-        // Distance of the cell will be the minimum distance to the closest
-        // one out of four middle destination cells.
-        maze[i][j]->dist = min4(manhattan_dist(i, goal1, j, goal1),
-                                manhattan_dist(i, goal1, j, goal2),
-                                manhattan_dist(i, goal2, j, goal1),
-                                manhattan_dist(i, goal2, j, goal2));
-      }
-    }
-}
-
-/
-* Get the currently constructed maze and write to a binary file
-*
-void output_maze(){
-    // output the maze to a binary file
-    ofstream outfile("maze_out", ofstream::binary);
-    for(int i = 0; i < MAZE_SIZE; i++){
-        for(int j = 0; j < MAZE_SIZE; j++){
-            outfile.write( (char*)&maze[i][j], sizeof(int) );
-            outfile << maze[i][j];
-        }
-    }
-    outfile.close();
-    cout << "done..." << endl;
-    cout << "list the dists of each cell below.... " << endl;
-    // printing out the maze and dists to the console
-//    for(int i = 0; i < MAZE_SIZE; i++){
-  //      for(int j = 0; j < MAZE_SIZE; j++){
-//            cout<< " ( " << i << " , " << j << " ):  " << maze[i][j]->dist << endl;
-//        }
-//    }
-}
-
-void serialize(int rows, int cols) {
-    ofstream outfile;
-    outfile.open("maze_out", ofstream::binary);
-//    outfile << rows << " ";
-//    outfile << cols << " ";
-    for (int i = 0; i < rows; i++){
-        for(int j = 0; j < cols; j++){
-         //   outfile << maze[i][j] << " ";
-            outfile.write(reinterpret_cast<char*> (&maze[i][j]), sizeof(int));
-        }
-    }
-    outfile.close();
-
-
-  //  FILE* pFile = fopen("maze_out", "wb");
-  //  fwrite(maze, sizeof(maze), 1, pFile);
-  //  fclose(pFile);
-}
-
-void deserialize() {
-    int rows = 16;
-    int cols = 16;
-    int goal1 = MAZE_SIZE / 2;
-    int goal2 = (MAZE_SIZE - 1) / 2;
-    for (int i = 0; i < MAZE_SIZE; i++) {
-        for (int j = 0; j < MAZE_SIZE; j++) {
-            // Distance of the cell will be the minimum distance to the closest
-            // one out of four middle destination cells.
-            mazeIn[i][j] = new Cell(i, j, min4(manhattan_dist(i, goal1, j, goal1),
-                                             manhattan_dist(i, goal1, j, goal2),
-                                             manhattan_dist(i, goal2, j, goal1),
-                                             manhattan_dist(i, goal2, j, goal2)));
-
-
-        }
-    }
-    ifstream inFile;
-    inFile.open("maze_out", ios::in | ios::binary);
-    cout << "This line entered... " << endl;
-    for (int i = 0; i < rows; i++){
-        for(int j = 0; j < cols; j++){
-            inFile.read (reinterpret_cast<char*> (&mazeIn[i][j]), sizeof(int));
-        }
-    }
-    inFile.close();
-
-  //  FILE* pFile = fopen("maze_out", "rb");
-  //  fread(mazeIn, sizeof(mazeIn), 1, pFile);
-  //  fclose(pFile);
-}
-
-/
-* Read in the maze data from a previously stored binary file
-**/
-
-
-
-
-/*
-* Initializes the default (blank maze) manhattan distance values into existing maze
-* Given a 5 * 5 maze, it would look like:
-*    _________________________
-*   | 4  | 3  | 2  | 3  | 4  |
-*   |____|____|____|____|____|
-*   | 3  | 2  | 1  | 2  | 2  |
-*   |____|____|____|____|____|
-*   | 2  | 1  | 0  | 1  | 3  |
-*   |____|____|____|____|____|
-*   | 3  | 2  | 1  | 2  | 3  |
-*   |____|____|____|____|____|
-*   | 4  | 3  | 2  | 3  | 4  |
-*   |____|____|____|____|____|
-*
-* Each cell stores its distance from the target cell (In this case, (2,2)  )
-*/
-
-
-void add_cell_to_update(vector<Cell*> &stack, Cell *cell) {
+void add_cell_to_update(vector < Cell * > &stack, Cell * cell) {
     stack.push_back(cell);
 }
 
 /*
 * Function to update the distances of the cells
 */
-void update_distances(vector<Cell*> &stack) {
+void update_distances(vector < Cell * > &stack) {
     Cell *current;
-    vector<Cell *> open_neighbors;
-    vector<Cell*> neighbors;
+    vector < Cell * > open_neighbors;
+    vector < Cell * > neighbors;
 
     int x, y;
     int min;
@@ -332,7 +190,7 @@ void set_wall(int y, int x) {
         }
         if (y > 0) {
             if (has_right_wall()) {
-                maze[y-1][x]->top_wall = true;
+                maze[y - 1][x]->top_wall = true;
             }
         }
         if (has_left_wall()) {
@@ -343,12 +201,12 @@ void set_wall(int y, int x) {
     else if (direction == DOWN) {
         if (y > 0) {
             if (has_front_wall()) {
-                maze[y-1][x]->top_wall = true;
+                maze[y - 1][x]->top_wall = true;
             }
         }
         if (x > 0) {
             if (has_right_wall()) {
-                maze[y][x-1]->right_wall = true;
+                maze[y][x - 1]->right_wall = true;
             }
         }
         if (has_left_wall()) {
@@ -368,9 +226,99 @@ void set_wall(int y, int x) {
         }
         if (y > 0) {
             if (has_left_wall()) {
-                maze[y-1][x]->top_wall = true;
+                maze[y - 1][x]->top_wall = true;
             }
         }
+    }
+}
+
+
+void explore(vector <Cell*> &stack, int y, int x) {
+    if (maze[y][x]->visited) {
+    return;
+    }
+    else {
+    maze[y][x]->visited = true;
+    }
+    if (maze[y][x]->top_wall || maze[y][x]->right_wall) {
+    stack.push_back(maze[y][x]);
+    update_distances(stack);
+    }
+    // if mouse is located bottom left of center then we want to prioritize exploring top/right
+    if (y < MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
+    // explore top
+    if (y < MAZE_SIZE - 1) {
+    explore(stack, y + 1, x);
+    }
+    // explore right
+    if (x < MAZE_SIZE - 1) {
+    explore(stack, y, x + 1);
+    }
+    // explore down
+    if (y > 0) {
+    explore(stack, y - 1, x);
+    }
+    // explore left
+    if (x > 0) {
+    explore(stack, y, x - 1);
+    }
+    }
+    // if mouse is located top left of center then we want to prioritize exploring bottom/right
+    else if (y > MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
+    // explore right
+    if (x < MAZE_SIZE - 1) {
+    explore(stack, y, x + 1);
+    }
+    // explore down
+    if (y > 0) {
+    explore(stack, y - 1, x);
+    }
+    // explore top
+    if (y < MAZE_SIZE - 1) {
+    explore(stack, y + 1, x);
+    }
+    // explore left
+    if (x > 0) {
+    explore(stack, y, x - 1);
+    }
+    }
+    // if mouse is located top right of center then we want to prioritize exploring bottom/left
+    else if (y > MAZE_SIZE / 2 && x > MAZE_SIZE / 2) {
+    // explore down
+    if (y > 0) {
+    explore(stack, y - 1, x);
+    }
+    // explore left
+    if (x > 0) {
+    explore(stack, y, x - 1);
+    }
+    // explore top
+    if (y < MAZE_SIZE - 1) {
+    explore(stack, y + 1, x);
+    }
+    // explore right
+    if (x < MAZE_SIZE - 1) {
+    explore(stack, y, x + 1);
+    }
+    }
+    // if mouse is located bottom right of center then we want to prioritize exploring bottom/right
+    else if (y < MAZE_SIZE / 2 && x > MAZE_SIZE / 2) {
+    // explore left
+    if (x > 0) {
+    explore(stack, y, x - 1);
+    }
+    // explore top
+    if (y < MAZE_SIZE - 1) {
+    explore(stack, y + 1, x);
+    }
+    // explore down
+    if (y > 0) {
+    explore(stack, y - 1, x);
+    }
+    // explore right
+    if (x < MAZE_SIZE - 1) {
+    explore(stack, y, x + 1);
+    }
     }
 }
 
@@ -400,7 +348,7 @@ bool fully_explored() {
 */
 void generate_random_walls() {
     string s;
-    srand((unsigned)time(0));
+    srand((unsigned) time(0));
     //cout << time(0) << endl;
     int numCells = MAZE_SIZE * MAZE_SIZE;
     int numWalls = rand() % (numCells / 4) + (numCells * 3 / 4);
@@ -527,9 +475,9 @@ void print_maze() {
                 }
 
                 int dist = maze[y][j]->dist;
-          //      pc.printf("   ");
+                //      pc.printf("   ");
                 if (dist > 99) {
-                    pc.printf("%d",dist);
+                    pc.printf("%d", dist);
                 }
                 else if (dist > 9) {
                     pc.printf(" %d", dist);
@@ -556,76 +504,6 @@ void print_maze() {
     pc.printf("+\n\n");
 }
 
-/*
-void print_debug_maze() {
-
-    // print top wall
-    for (int i = 0; i < MAZE_SIZE; i++) {
-        cout << "+---";
-    }
-    cout << "+\n";
-
-    int rows = MAZE_SIZE + (MAZE_SIZE - 1);
-    int y;
-
-    for (int i = 0; i < rows; i++) {
-        if (i % 2 == 0) {
-            y = MAZE_SIZE - 1 - i / 2;
-        }
-        else {
-            y = MAZE_SIZE - 1 - (i / 2 + 1);
-        }
-        for (int j = 0; j < MAZE_SIZE; j++) {
-
-            if (i % 2 != 0) {
-                if (mazeIn[y][j]->top_wall) {
-                    cout << "+---";
-                }
-                else {
-                    cout << "+   ";
-                }
-                if (j == MAZE_SIZE - 1) {
-                    cout << "+";
-                }
-            }
-
-            else {
-                if (j == 0) {
-                    cout << "|";
-                }
-
-                int dist = mazeIn[y][j]->dist;
-                if (dist > 99) {
-                    cout << dist;
-                }
-                else if (dist > 9) {
-                    cout << " " << dist;
-                }
-                else {
-                    cout << " " << dist << " ";
-                }
-
-                if (mazeIn[y][j]->right_wall || j == MAZE_SIZE - 1) {
-                    cout << "|";
-                }
-                else {
-                    cout << " ";
-                }
-            }
-        }
-        cout << "\n";
-    }
-
-    // print bottom wall
-    for (int i = 0; i < MAZE_SIZE; i++) {
-        cout << "+---";
-    }
-    cout << "+\n";
-}
-
-
-*/
-
 int main() {
     init_maze();
     ////    generate_random_walls();
@@ -640,12 +518,4 @@ int main() {
 //    update_distances(cells);
 
     print_maze();
-    //      load_maze("2011robotic");
-//    serialize(16, 16);
-//    deserialize();
-//    cout << "     " << endl;
-//    //generateOnePath(maze);
-//    print_debug_maze();
 }
-
-*/
