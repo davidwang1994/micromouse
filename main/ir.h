@@ -12,6 +12,13 @@
 #define COEFF_7 0
 
 /*
+ * has_front_wall
+ * Parameters: none
+ * Returns: boolean, if there is a front wall detected or not, for PID control
+ */
+bool has_front_wall();
+
+/*
  * has_left_wall
  * Parameters: none
  * Returns: boolean, if there is a left wall detected or not, for PID control

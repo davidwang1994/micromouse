@@ -2,26 +2,26 @@
 
 
 
-
+Serial pc(PA_9, PA_10);
 
 Ticker ticker;
 
 float speed;
 void printStatus(){
-    pc.printf("\r\nLeft: %i\r\n", leftEncoder);
-    pc.printf("Right: %i\r\n", rightEncoder);
-    pc.printf("Motor Speed: %.2f\r\n", speed);
+  pc.printf("\r\nLeft: %i\r\n", leftEncoder);
+  pc.printf("Right: %i\r\n", rightEncoder);
+  pc.printf("Motor Speed: %.2f\r\n", speed);
 }
 
 
 DigitalOut led(LED1);
 int main() {
   pc.printf("\r\nHi!\r\n");
-  
+
   speed = 0.0f;
-  
+
   ticker.attach(&printStatus, 0.5);
-  
+
   //Imperial march on buzzer
   float W = 3; //whole 4/4
   float H = W/2; //half 2/4

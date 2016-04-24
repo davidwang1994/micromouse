@@ -1,3 +1,5 @@
+#ifndef __BUZZER_H__
+#define __BUZZER_H__
 #include "mbed.h"
 
 
@@ -142,3 +144,4 @@ private:
 };
 
 extern Buzzer buzzer;
+#endif

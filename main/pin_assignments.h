@@ -5,7 +5,8 @@
 #include "buzzer.h"
 
 //IO
-Serial pc(PA_9, PA_10); 
+
+extern Serial pc;
 
 DigitalIn userButton(PC_10);
 
@@ -21,15 +22,15 @@ DigitalOut ledMf(PC_6);
 
 
 //Motor
-Motor leftMotor(PC_7, PC_8); 
+Motor leftMotor(PC_7, PC_8);
 Motor rightMotor(PB_9, PB_8);
 
 
 //Sensors
 Gyro gyro(PB_0, PB_1);
 
-Encoder leftEncoder(D7, D8); 
-Encoder rightEncoder(D6, D5); 
+Encoder leftEncoder(D7, D8);
+Encoder rightEncoder(D6, D5);
 
 IRSensor rightIR(PH_0, PA_4);
 IRSensor rightDiagonalIR(PH_0, PA_4);

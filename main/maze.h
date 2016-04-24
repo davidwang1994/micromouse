@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include "ir.h"
+#include "pin_assignments.h"
 
 #define TOP 0
 #define RIGHT 1
