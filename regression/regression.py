@@ -9,7 +9,7 @@ def fit_poly_func(X, Y, d):
     for i in range(len(X)):
         A[i,:] = X[i]
     for i in range(-d, d+1):
-        A[:,i] = A[:,i]**i
+        A[:,i+d] = A[:,i+d]**i
     Ainv = np.linalg.pinv(A)
     return np.dot(Ainv, Y)
 
@@ -17,7 +17,7 @@ def apply_poly_func(X, coeff):
     Y = 0
     mid = len(coeff) / 2
     for i in range(-mid, mid+1):
-        Y += coeff[i]*X**i
+        Y += coeff[i+mid]*X**i
     return Y
 
 data = sio.loadmat('measurements.mat')
