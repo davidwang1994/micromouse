@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
+#include "ir.h"
 
 #define TOP 0
 #define RIGHT 1
