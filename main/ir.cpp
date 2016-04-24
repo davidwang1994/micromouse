@@ -241,8 +241,8 @@ void ir::read_coeff_values() {
 	fclose(file);
 }
 
-void ir::ir2dist(Ir ir) {
-	int dist = 0
+float ir::ir_to_dist(Ir irValue) {
+	float dist = 0;
 	for (int i = 0; i < num_coeff_values; i++) {
 		dist = coeff[i] * pow(dist, -3+i);
 	}

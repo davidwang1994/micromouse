@@ -47,7 +47,7 @@ void update_distances(vector<Cell*> &stack);
 
 bool fully_explored();
 
-//void explore();
+void explore(vector<Cell> &stack, int y, int x);
 
 bool is_solved();
 

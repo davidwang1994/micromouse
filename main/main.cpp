@@ -3,6 +3,7 @@
 //#include "drive_control.h"
 //#include "pin_assignments.cpp"
 #include "IO.h"
+#include "maze.h"
 #include "motor.h"
 #include "encoder.h"
 #include "ir.h"
@@ -175,4 +176,10 @@ int main() {
         pressed = false;
     }
   }
+}
+
+int main() {
+    read_coeff_values();
+    init_maze();
+
 }
