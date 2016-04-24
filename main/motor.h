@@ -16,7 +16,7 @@
  */
 class Motor {
 public:
-	  
+      
     Motor(PinName _pwm, PinName _dir);
     
     /** 
@@ -33,13 +33,11 @@ public:
     void operator= (float speed) {
         Motor::speed(speed);
     }
-		
+        
 private:
-		PwmOut pwm_pin;
+    PwmOut pwm_pin;
     DigitalOut dir;
 };
-
-
 
 
 extern Motor leftMotor;

@@ -3,20 +3,13 @@
 
 #include "mbed.h"
 
-int num_coeff_values = 7;
-char *coeff_file_path = "../regression/coeff.txt";
-float coeff[num_coeff_values];
-
-/*
- * has_wall
- * Parameters: float, distance in cm
- * 	       wall_direction, char: 'l', 'r', 'f'
- * Returns: 0 if no wall is detected in that area
- * 	    1 if wall is within 1 cell distance
- *  	    2 if wall is within 2 cell distances
- * 	    3 if wall is within 3 cell distances
- */
-int has_wall(float dist, char wall_direction);
+#define COEFF_1 0
+#define COEFF_2 0
+#define COEFF_3 0
+#define COEFF_4 0
+#define COEFF_5 0
+#define COEFF_6 0
+#define COEFF_7 0
 
 /*
  * has_left_wall
@@ -32,15 +25,6 @@ bool has_left_wall();
  */
 bool has_right_wall();
 
-//bool has_front_wall();
-
-/*
- * ir_to_dist
- * Internal method, called by front_wall_dist, left_wall_dist, and right_wall_dist
- * Parameters: float, irVal from front_wall_dist
- * Returns: float, distance in cm from wall
- */
-float ir_to_dist(float irVal);
 
 /*
  * front_wall_dist
@@ -66,49 +50,58 @@ float right_wall_dist();
 void read_coeff_values();
 
 class IRSensor {
-	private:
-    	float last_read[5];
-    	
-	public:
-   	DigitalOut _enable;
+private:
+    DigitalOut _enable;
     AnalogIn _input;
-   
-    volatile float raw_value; //Currently read value
-    float _baseline; //Ambient value
+    volatile float value; 
     
-    IRSensor::IRSensor(PinName enable, PinName input) : _enable(enable), _input(input){}
+public:
+    float last_read[5];
+    
+    IRSensor(PinName enable, PinName input) : _enable(enable), _input(input){}
     
     //Get the value in encoder units, samples?... 
     float read(){
-	    	
-		float sum = 0;
-	
-		//Each duration takes 100us, 5 times = 0.5ms
-		for (int i = 0; i < 5; i++)
-		{
-			//Turn on IR LED tx
-			_enable = 1;
-	
-			//Wait for capacitor to fire, 10us
-			wait_us(10);
-			last_read[i] = _input;
-			sum += _input;
-	
-			//Wait 5us for turning off IR LED tx
-			wait_us(5);
-			_enable = 0;
-	
-			//Wait 85us for turning on IR LED tx
-			wait_us(85);
-		}
-			
-		return ir_to_dist(sum/5.0f);
-    }
+            
+        float sum = 0;
     
-    float[] get_last_readings(){
-    	return last_read;
-    }
+        //Each duration takes 100us, 5 times = 0.5ms
+        for (int i = 0; i < 5; i++)
+        {
+            //Turn on IR LED tx
+            _enable = 1;
     
+            //Wait for capacitor to fire, 10us
+            wait_us(10);
+            last_read[i] = _input;
+            sum += _input;
+    
+            //Wait 5us for turning off IR LED tx
+            wait_us(5);
+            _enable = 0;
+    
+            //Wait 85us for turning on IR LED tx
+            wait_us(85);
+        }
+        
+        sum /= 5.0f;
+        float square = sum * sum;
+        value = 0;
+        value += COEFF_1 * pow(sum, -3);
+        value += COEFF_2 * pow(sum, -2);
+        value += COEFF_3 / sum;
+        value += COEFF_4;
+        value += COEFF_5 * sum;
+        value += COEFF_6 * square;
+        value += COEFF_7 * square * sum;
+        return value;
+    }
+
+    //Get the number of cells away wall is
+    float cell_dist(){
+        return read() / 18;
+    }
+
     //Shorthand for read()
     operator float() {
         return read();
@@ -116,15 +109,12 @@ class IRSensor {
 
 };
 
-extern IRSensor IRLED6_R;
-extern IRSensor IRLED5_RD;
-extern IRSensor IRLED4_RF;
-extern IRSensor IRLED3_LF;
-extern IRSensor IRLED2_LD;
-extern IRSensor IRLED1_L;
-
-
-
+extern IRSensor rightIR;
+extern IRSensor rightDiagonalIR;
+extern IRSensor rightFrontIR;
+extern IRSensor leftFrontIR;
+extern IRSensor leftDiagonalIR;
+extern IRSensor leftIR;
 
 
 #endif
