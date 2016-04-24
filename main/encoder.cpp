@@ -1,5 +1,7 @@
 #include "encoder.h"
 
+
+
 /*
 Reset both encoders
 */
@@ -59,6 +61,7 @@ void Encoder::encode(void) {
     prevState_ = currState_;
 }
 
+//Resets the encoder
 void Encoder::reset(void) {
     pulses = 0;
 }

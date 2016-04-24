@@ -4,7 +4,6 @@
 #include "mbed.h"
 
 
-
 /*
 Reset both encoders
 */
@@ -14,7 +13,6 @@ void resetEncoders();
 Returns the average number of pulses across both encoders since last reset. Unit is encoder pulses; intended for straight driving only.
 */
 int getEncoderDistance();
-
 
 
 class Encoder {
@@ -40,7 +38,6 @@ private:
     
     void encode(void);
 };
-
 
 
 extern Encoder leftEncoder;
