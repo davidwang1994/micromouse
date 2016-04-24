@@ -1,27 +1,37 @@
 #include "drive_control.h"
+Serial pc(PA_9, PA_10);  //THIS MUST GO IN MAIN
 
 
-
-Serial pc(PA_9, PA_10);
 
 Ticker ticker;
 
 float speed;
 void printStatus(){
-  pc.printf("\r\nLeft: %i\r\n", leftEncoder);
-  pc.printf("Right: %i\r\n", rightEncoder);
-  pc.printf("Motor Speed: %.2f\r\n", speed);
+    pc.printf("\r\nLeft: %f\r\n", leftIR.read());
+    pc.printf("Left: %f\r\n", leftIR.value);
+    pc.printf("Right: %f\r\n", rightIR.read());
+    pc.printf("Right: %f\r\n", rightIR.value);
+    pc.printf("Front: %f\r\n", rightFrontIR.read());
+    pc.printf("Front: %f\r\n", rightFrontIR.value);
+    //pc.printf("Motor Speed: %.2f\r\n", speed);
 }
 
 
 DigitalOut led(LED1);
+
+extern "C" void mbed_reset();
+
 int main() {
-  pc.printf("\r\nHi!\r\n");
-
+  pc.baud(9600);
+  
+  //pc.printf("\r\nHi!\r\n");
+  
   speed = 0.0f;
-
-  ticker.attach(&printStatus, 0.5);
-
+  
+  printStatus();
+  
+  //ticker.attach(&printStatus, 1);
+  
   //Imperial march on buzzer
   float W = 3; //whole 4/4
   float H = W/2; //half 2/4
@@ -29,8 +39,22 @@ int main() {
   float E = Q/2; //eighth 1/8
   float S = E/2; // sixteenth 1/16
 
+    wait(1);
+
+
   while(1){
-    buzzer.play(_LA3,Q);
+    
+    
+    /*turn(0.05);
+    wait(1);
+    stop();
+    wait(1);
+    turn(-0.05);
+    wait(1);
+    stop();*/
+    wait(1);
+    
+    /*buzzer.play(_LA3,Q);
     buzzer.play(_LA3,Q);
     buzzer.play(_LA3,Q);
     buzzer.play(_F3,E+S);
@@ -100,6 +124,6 @@ int main() {
     buzzer.play(_F3,E+S);
     buzzer.play(_C4,S);
     buzzer.play(_LA3,H);
-    buzzer.play(_OFF,W);
+    buzzer.play(_OFF,W);*/
   }
 }

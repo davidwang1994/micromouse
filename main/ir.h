@@ -3,20 +3,15 @@
 
 #include "mbed.h"
 
-#define COEFF_1 0
-#define COEFF_2 0
-#define COEFF_3 0
-#define COEFF_4 0
-#define COEFF_5 0
-#define COEFF_6 0
-#define COEFF_7 0
 
-/*
- * has_front_wall
- * Parameters: none
- * Returns: boolean, if there is a front wall detected or not, for PID control
- */
-bool has_front_wall();
+
+#define COEFF_1 0.0000111242605f
+#define COEFF_2 -0.00240366523f
+#define COEFF_3 .322318258f
+#define COEFF_4 15.4429807f
+#define COEFF_5 -46.3568072f
+#define COEFF_6 82.2683546f
+#define COEFF_7 -54.0198951f
 
 /*
  * has_left_wall
@@ -54,22 +49,31 @@ float left_wall_dist();
  */
 float right_wall_dist();
 
-void read_coeff_values();
-
 class IRSensor {
-private:
+public:
     DigitalOut _enable;
     AnalogIn _input;
     volatile float value; 
+    Timer timer; //The timer to make read use last read value if less than 2 ms passed
     
-public:
+
     float last_read[5];
     
-    IRSensor(PinName enable, PinName input) : _enable(enable), _input(input){}
+    IRSensor(PinName enable, PinName input) : _enable(enable), _input(input){
+        //timer.start();
+    }
     
     //Get the value in encoder units, samples?... 
     float read(){
-            
+        /*
+        //If not 2 ms passed, use last value
+        if (timer.read_us() <= 2000){
+            return value;
+        }
+        //Otherwise reset the timer(it keeps counting) and get new reading
+        timer.reset();
+        */
+        
         float sum = 0;
     
         //Each duration takes 100us, 5 times = 0.5ms
@@ -80,8 +84,8 @@ public:
     
             //Wait for capacitor to fire, 10us
             wait_us(10);
-            last_read[i] = _input;
-            sum += _input;
+            //last_read[i] = _input;
+            sum += _input.read();
     
             //Wait 5us for turning off IR LED tx
             wait_us(5);
@@ -91,17 +95,22 @@ public:
             wait_us(85);
         }
         
-        sum /= 5.0f;
+        
+        sum /= 5;
+        value = sum;
+        
         float square = sum * sum;
-        value = 0;
-        value += COEFF_1 * pow(sum, -3);
-        value += COEFF_2 * pow(sum, -2);
-        value += COEFF_3 / sum;
-        value += COEFF_4;
-        value += COEFF_5 * sum;
-        value += COEFF_6 * square;
-        value += COEFF_7 * square * sum;
-        return value;
+        float cube = square * sum;
+        float _value = 0;
+        _value += COEFF_1 / cube;
+        _value += COEFF_2 / square;
+        _value += COEFF_3 / sum;
+        _value += COEFF_4;
+        _value += COEFF_5 * sum;
+        _value += COEFF_6 * square;
+        _value += COEFF_7 * square * sum;
+        return _value;
+        
     }
 
     //Get the number of cells away wall is
