@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include "maze.h"
 
 Cell *maze[MAZE_SIZE][MAZE_SIZE];
