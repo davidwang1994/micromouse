@@ -7,8 +7,7 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
-#include "ir.h"
-#include "pin_assignments.h"
+#include "ir.h" //CHANGED, removed pin_assigments
 
 #define TOP 0
 #define RIGHT 1
@@ -17,9 +16,11 @@
 
 using namespace std;
 
+extern Serial pc; //CHANGED
+
 const int MAZE_SIZE = 16;
 
-int direction = TOP;
+extern int direction; //CHANGED
 
 class Cell {
 

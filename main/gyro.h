@@ -1,5 +1,5 @@
-#ifndef __GYRO_H__
-#define __GYRO_H__
+#ifndef GYRO_H
+#define GYRO_H
 
 #include "mbed.h"
 
@@ -44,5 +44,6 @@ private:
 
 
 extern Gyro gyro; //The gyro sensor
+
 
 #endif

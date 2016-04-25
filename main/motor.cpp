@@ -14,9 +14,12 @@ Motor::Motor(PinName _pwm_pin, PinName _dir):
 //Sets motor speed
 void Motor::speed(float speed) {
     if (speed < 0.0f){ //Backwards
+        if (speed < -1.0f){
+            speed = -1.0f;
+        }
         dir = 1;
         pwm_pin = speed + 1.0f; // Inverts it so 1 is off and 0 is on
-    } else { //Forwards      
+    } else { //Forwards   
         dir = 0;
         pwm_pin = speed;
     }

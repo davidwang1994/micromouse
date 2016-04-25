@@ -1,5 +1,6 @@
-#ifndef __BUZZER_H__
-#define __BUZZER_H__
+#ifndef BUZZER_H
+#define BUZZER_H
+
 #include "mbed.h"
 
 
@@ -112,7 +113,7 @@ class Buzzer {
 public:
     Buzzer(PinName pwm_pin): pin(pwm_pin) {
         playing = false;
-        volume = 0.9f;
+        volume = 0.2f;
     }
     
     //Sets the volume (duty cycle) of the buzzer. Default 0.005, higher is louder 
@@ -144,4 +145,5 @@ private:
 };
 
 extern Buzzer buzzer;
+
 #endif

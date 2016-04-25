@@ -9,14 +9,14 @@
  */
 float front_wall_dist()
 {
-    float left = rightFrontIR;
-    float right = leftFrontIR;
+    //float left = leftFrontIR;
+    float right = rightFrontIR;
     
-    if (left - right > 5)
-    {
+    //if (left - right > 5)
+    //{
         //pc.printf("IR Front Sensors don't match");
-    }
-    return left;
+    //}
+    return rightFrontIR;
 }
 
 /*
@@ -39,13 +39,6 @@ float right_wall_dist()
     return rightIR;
 }
 
-// has front wall, for PID cotrol
-// We will need to add rightFronIR when we add it
-bool has_front_wall() {
-    return leftFrontIR < 12;
-
-}
-
 //has_left_wall, for PID control
 bool has_left_wall()
 {
@@ -56,4 +49,8 @@ bool has_left_wall()
 bool has_right_wall()
 {
     return rightIR < 12;
+}
+
+bool has_front_wall() {
+    return rightFrontIR < 12;
 }
