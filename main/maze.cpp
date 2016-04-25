@@ -423,8 +423,8 @@ void explore(vector<Cell> &stack, int y, int x) {
         set_wall(y,x);
     }
     if (maze[y][x]->top_wall || maze[y][x]->right_wall) {
-        stack.push_back(maze[y][x]);
-        update_distances(stack);
+        stack.push_back(maze[y][x]);    //COMPILE ERROR
+        update_distances(stack);        //COMPILE ERROR
     }
 // if mouse is located bottom left of center then we want to prioritize exploring top/right
     if (y < MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
@@ -503,4 +503,3 @@ void explore(vector<Cell> &stack, int y, int x) {
         }
     }
 }
-

@@ -14,6 +14,13 @@
 #define COEFF_7 -54.0198951f
 
 /*
+ * has_front_wall
+ * Parameters: none
+ * Returns: boolean, if there is a front wall detected or not, for maze 
+ */
+bool has_front_wall();
+
+/*
  * has_left_wall
  * Parameters: none
  * Returns: boolean, if there is a left wall detected or not, for PID control
@@ -60,19 +67,18 @@ public:
     float last_read[5];
     
     IRSensor(PinName enable, PinName input) : _enable(enable), _input(input){
-        //timer.start();
+        timer.start();
     }
     
     //Get the value in encoder units, samples?... 
     float read(){
-        /*
+        
         //If not 2 ms passed, use last value
         if (timer.read_us() <= 2000){
             return value;
         }
         //Otherwise reset the timer(it keeps counting) and get new reading
         timer.reset();
-        */
         
         float sum = 0;
     
@@ -110,7 +116,6 @@ public:
         _value += COEFF_6 * square;
         _value += COEFF_7 * square * sum;
         return _value;
-        
     }
 
     //Get the number of cells away wall is

@@ -50,3 +50,7 @@ bool has_right_wall()
 {
     return rightIR < 12;
 }
+
+bool has_front_wall() {
+    return rightFrontIR < 12;
+}

@@ -1,10 +1,17 @@
+#ifndef DRIVE_CONTROL_H
+#define DRIVE_CONTROL_H
+
 #include "pin_assignments.h"
+
+//States from main
+//bool DONE_MOVING; //Mouse is driving or turning if true, false otherwise
+//bool UPDATE_POSITION; //True when just drove into next cell 
 
 
 //Methods for drive control
 void drive_cell();
 void speed_drive_cell(int cells);
-void speed_drive_cell_diagonal(int cells);
+//void speed_drive_cell_diagonal(int cells); //TODO: use ir for collision detection and gyro
 
 
 //Methods for turn control
@@ -15,6 +22,9 @@ void speed_turn_left();
 void speed_turn_right();
 void speed_turn_left_diagonal();
 void speed_turn_right_diagonal();
+
+
+
 
 
 
@@ -76,19 +86,19 @@ void _drive_cell(){
     //If in next cell, update position and start running maze algorithm
     if (leftEncoder > next_update_distance && rightEncoder > next_update_distance){
         next_update_distance += cell_distance;
-        //in_next_cell = true; //Signal to main that it is in next cell and update current position 
+        UPDATE_POSITION = true; //Signal to main that it is in next cell and update current position 
     }
     
     int distance_left = total_distance - getEncoderDistance();
     
     //If passed distance, then done (no oversteer control)
     if (distance_left <= 0){
-        //moving = false; //Signal to main
+        DONE_MOVING = true; //Signal to main
         drive_ticker.detach();
         return;
     }
     
-    //PID for driving correct distance, including braking but not including oversteer control
+    //P is for distance, D is for velocity. Less distance, lower the speed. Higher the velocity, lower the speed (actually acceleration) 
     float motorSpeed = distance_left * distance_P + (distance_left - last_distance_left) * distance_D;
     if (motorSpeed > 1.0f){
         motorSpeed = 1.0f;
@@ -126,6 +136,14 @@ void _drive_cell(){
     last_position_error = errorP;   
 }
 
+//Initializes driving using preset constraints
+void _drive_init(){
+    resetEncoders();
+    last_distance_left = 0;
+    last_position_error = 0;
+    DONE_MOVING = false;
+    drive_ticker.attach(&_drive_cell, 0.01); 
+}
 
 //Drives one cell, updating current_position and calling update_maze when reached next cell, and calling get_next_move when drove full cell distance
 void drive_cell(){
@@ -136,10 +154,7 @@ void drive_cell(){
     position_D = DRIVE_CELL_POSITION_D;
     total_distance = CELL_DISTANCE;
     next_update_distance = DISTANCE_TO_NEXT_CELL;
-    resetEncoders();
-    last_distance_left = 0;
-    last_position_error = 0;
-    drive_ticker.attach(&_drive_cell, 0.01); 
+    _drive_init();
 }
 
 
@@ -152,13 +167,11 @@ void speed_drive_cell(int cells){
     position_D = DRIVE_CELL_POSITION_D;
     total_distance = CELL_DISTANCE * cells;
     next_update_distance = DISTANCE_TO_NEXT_CELL;
-    resetEncoders();
-    last_distance_left = 0;
-    last_position_error = 0;
-    drive_ticker.attach(&_drive_cell, 0.01);
+    _drive_init();
 }
 
-//Speed run function to drive straight for given number of cells. Updates maze in every cell as usual
+
+/*//Speed run function to drive straight for given number of cells. Updates maze in every cell as usual
 void speed_drive_cell_diagonal(int cells){
     cell_distance = CELL_DISTANCE_DIAGONAL;
     distance_P = SPEED_DRIVE_CELL_DISTANCE_DIAGONAL_P;
@@ -167,12 +180,9 @@ void speed_drive_cell_diagonal(int cells){
     position_D = DRIVE_CELL_POSITION_DIAGONAL_D;
     total_distance = CELL_DISTANCE_DIAGONAL * cells;
     next_update_distance = DISTANCE_TO_NEXT_CELL_DIAGONAL;
-    resetEncoders();
-    last_distance_left = 0;
-    last_position_error = 0;
-    drive_ticker.attach(&_drive_cell, 0.01);
+    _drive_init();
 }
-
+*/
 
 
 
@@ -196,11 +206,19 @@ void _turn(){
     if ((degrees > 0 && diffP < 5) || (degrees < 0 && diffP > -5)){
         drive_ticker.detach();
         stop();
+        DONE_MOVING = true;
         return;
     }
     
     turn(diffP * turn_P_constant + (lastDiffP - diffP) * turn_D_constant); 
     lastDiffP = diffP;
+}
+
+//Initializes the turn using preset constraints
+void _turn_init(){
+    resetEncoders();
+    DONE_MOVING = false;
+    drive_ticker.attach(&_turn, 0.01);
 }
 
 // Controls the right turn. Uses the PID and the 
@@ -209,8 +227,7 @@ void turn_right(){
     turn_P_constant = TURN_P_CONSTANT;
     turn_D_constant = TURN_D_CONSTANT;
     degrees = 90;
-    resetEncoders();
-    drive_ticker.attach(&_turn, 0.01);
+    _turn_init();
 }
 
 // Controls the left turn. Uses the PID and the 
@@ -219,8 +236,7 @@ void turn_left(){
     turn_P_constant = TURN_P_CONSTANT;
     turn_D_constant = TURN_D_CONSTANT;
     degrees = -90;
-    resetEncoders();
-    drive_ticker.attach(&_turn, 0.01);
+    _turn_init();
 } 
 
 // Controls the 180 turn. Uses the PID and the 
@@ -229,8 +245,7 @@ void turn_around(){
     turn_P_constant = TURN_P_CONSTANT;
     turn_D_constant = TURN_D_CONSTANT;
     degrees = 180;
-    resetEncoders();
-    drive_ticker.attach(&_turn, 0.01);
+    _turn_init();
 }
 
 // Controls the right turn. Uses the PID and the 
@@ -239,8 +254,7 @@ void speed_turn_right(){
     turn_P_constant = SPEED_TURN_P_CONSTANT;
     turn_D_constant = SPEED_TURN_D_CONSTANT;
     degrees = 90;
-    resetEncoders();
-    drive_ticker.attach(&_turn, 0.01);
+    _turn_init();
 }
 
 // Controls the left turn. Uses the PID and the 
@@ -249,8 +263,7 @@ void speed_turn_left(){
     turn_P_constant = SPEED_TURN_P_CONSTANT;
     turn_D_constant = SPEED_TURN_D_CONSTANT;
     degrees = -90;
-    resetEncoders();
-    drive_ticker.attach(&_turn, 0.01);
+    _turn_init();
 }
 
 // Controls the right turn. Uses the PID and the 
@@ -259,8 +272,7 @@ void speed_turn_right_diagonal(){
     turn_P_constant = SPEED_TURN_P_CONSTANT;
     turn_D_constant = SPEED_TURN_D_CONSTANT;
     degrees = 45;
-    resetEncoders();
-    drive_ticker.attach(&_turn, 0.01);
+    _turn_init();
 }
 
 // Controls the left turn. Uses the PID and the 
@@ -269,6 +281,8 @@ void speed_turn_left_diagonal(){
     turn_P_constant = SPEED_TURN_P_CONSTANT;
     turn_D_constant = SPEED_TURN_D_CONSTANT;
     degrees = -45;
-    resetEncoders();
-    drive_ticker.attach(&_turn, 0.01);
+    _turn_init();
 } 
+
+
+#endif
