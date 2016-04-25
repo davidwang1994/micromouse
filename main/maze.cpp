@@ -414,7 +414,7 @@ void print_maze() {
     pc.printf("+\n\n");
 }
 
-void explore(vector<Cell> &stack, int y, int x) {
+void explore(vector<Cell*> &stack, int y, int x) {
     if (maze[y][x]->visited) {
         return;
     }
