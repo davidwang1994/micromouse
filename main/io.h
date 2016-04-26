@@ -3,17 +3,35 @@
 
 #include "drive_control.h"
 
-void printStatus(){
-    pc.printf("\r\nLeft: %f\r\n", leftIR.read());
-    pc.printf("Left: %f\r\n", leftIR.value);
-    pc.printf("Right: %f\r\n", rightIR.read());
-    pc.printf("Right: %f\r\n", rightIR.value);
-    pc.printf("Front: %f\r\n", rightFrontIR.read());
-    pc.printf("Front: %f\r\n", rightFrontIR.value);
-    //pc.printf("Motor Speed: %.2f\r\n", speed);
+void print_battery(){
+    pc.printf(" %f\r\n", battery.read());
 }
 
+void print_encoder(){
+    pc.printf("left encoder: %d\r\n" , leftEncoder);
+    pc.printf("right encoder: %d\r\n" , rightEncoder);
+}
 
+void print_ir_raw (IRSensor ir){
+    for (int i = 0; i < 5; i ++){
+        pc.printf(" %f\r\n", ir.last_read[i]);
+    }
+}
+
+void print_ir(){
+    pc.printf("\r\nLeft: %f\r\n", leftIR.read());
+    print_ir_raw(leftIR);
+    pc.printf("LeftAvg: %f\r\n", leftIR.value);
+    
+    pc.printf("Right: %f\r\n", rightIR.read());
+    print_ir_raw(rightIR);
+    pc.printf("Right_Avg: %f\r\n", rightIR.value);
+    
+    pc.printf("Front: %f\r\n", rightFrontIR.read());
+    print_ir_raw(rightFrontIR);
+    pc.printf("Front_Avg: %f\r\n", rightFrontIR.value);
+    //pc.printf("Motor Speed: %.2f\r\n", speed);
+}
 
 
 void play_imperial_march(){

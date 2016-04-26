@@ -1,4 +1,5 @@
 #include "maze.h"
+#include "math.h"
 
 Cell *maze[MAZE_SIZE][MAZE_SIZE];
 Cell *mazeIn[MAZE_SIZE][MAZE_SIZE];
@@ -84,6 +85,91 @@ void init_maze() {
 
 void add_cell_to_update(vector <Cell*> &stack, Cell * cell) {
     stack.push_back(cell);
+}
+
+
+/* Determine the nearby cell with the smallest distance  
+ *
+ */
+Cell* next_move(Cell *current){
+    int x, y,_minX, _minY, i, j;
+    // center cell indices of maze
+    int x_goal = MAZE_SIZE / 2;
+    int y_goal = (MAZE_SIZE - 1) / 2;
+    // initial pos of next cell.
+    _minX = 0;
+    _minY = 0;
+    // current cell indices
+    x = current->x;
+    y = current->y;
+    // checks the next cell with the smallest distance
+    for(i = -1; i <= 1; i++){
+        for(j = -1; j <= 1; j++){
+            int next_x = x + i;
+            int next_y = y + j;
+            // border cells are ignored
+            if(next_x < 0 || next_y < 0)  continue;
+            // means cell does not exist
+            if(maze[next_x][next_y] == 0) continue;   
+            // ignore diagnal cells for now
+            if((next_x != current->x) && (next_y != current->y))  continue;
+            // if the next cell has a smaller distance then check
+            if(maze[next_x][next_y]->dist < current->dist){
+                // breaking ties
+                if((next_x == _minX) && (next_y == _minY)){
+                    // check if the mouse is facing straight 0->1->2->3 counter-clockwise
+                    if((current_direction == TOP && next_x > y) || (current_direction == DOWN && next_y < y) ||
+                       (current_direction == LEFT && next_x < x) || (current_direction == RIGHT && next_x > x)){
+                        _minX = x + i;
+                        _minY = y + j;
+                       continue;
+                    }
+                    // check for whichever is closer to the center of the maze
+                    else{
+                        double prev_to_goal = sqrt(pow(x_goal - _minX, 2.0) + pow(y_goal - _minY, 2.0));
+                        double curr_to_goal = sqrt(pow(x_goal - next_x, 2.0) + pow(y_goal - next_y, 2.0));
+                        if(curr_to_goal < prev_to_goal){
+                            _minX = x + i;
+                            _minY = y + j;
+                            continue;
+                        }
+                    }
+                }
+                else{
+                    // not tie condition
+                    _minX = x + i;
+                    _minY = y + j;
+                }
+            }
+
+        }
+    }
+    // signals next cell's direction
+/*    if((_minX < x) && (_minY < y)){
+        next_direction = SOUTHWEST;
+    } */
+    if((_minX < x) && (_minY == y)){
+        next_direction = LEFT;
+    }
+/*    if((_minX < x) && (_minY > y)){
+        next_direction = NORTHWEST;
+    }*/
+    if((_minX == x) && (_minY > y)){
+        next_direction = TOP;
+    }
+/*    if((_minX > x) && (_minY > y)){
+        next_direction = NORTHEAST;
+    }*/
+    if((_minX > x) && (_minY == y)){
+        next_direction = RIGHT;
+    }
+/*    if((_minX > x) && (_minY < y)){
+        next_direction = SOUTHEAST;
+    }*/
+    if((_minX == x) && (_minY < y)){
+        next_direction = DOWN;
+    }
+    return maze[_minX][_minY];
 }
 
 /*
@@ -414,7 +500,7 @@ void print_maze() {
     pc.printf("+\n\n");
 }
 
-void explore(vector<Cell> &stack, int y, int x) {
+void explore(vector<Cell*> &stack, int y, int x) {
     if (maze[y][x]->visited) {
         return;
     }

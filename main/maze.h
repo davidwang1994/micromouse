@@ -14,13 +14,25 @@
 #define DOWN 2
 #define LEFT 3
 
+#define NORTH 0
+#define EAST 1
+#define SOUTH 2
+#define WEST 3
+#define NORTH_WEST 4
+#define NORTH_EAST 5
+#define SOUTH_WEST 6
+#define SOUTH_EAST 7
+
+
 using namespace std;
 
-extern Serial pc; //CHANGED
+extern Serial pc; 
 
 const int MAZE_SIZE = 16;
 
-extern int direction; //CHANGED
+extern int direction; 
+extern int next_direction;
+extern int current_direction;
 
 class Cell {
 

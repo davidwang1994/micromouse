@@ -27,7 +27,7 @@ void Motor::speed(float speed) {
 
 //Sets motor speed to 0
 void Motor::stop() {
-    speed(0.0);
+    speed(0);
 }
 
 
