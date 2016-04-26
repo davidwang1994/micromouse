@@ -20,7 +20,10 @@ extern Serial pc; //CHANGED
 
 const int MAZE_SIZE = 16;
 
-extern int direction; //CHANGED
+
+extern int next_cell_direction;
+extern int direction;
+extern int curr_dir;
 
 class Cell {
 
