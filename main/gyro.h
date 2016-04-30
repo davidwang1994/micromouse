@@ -6,7 +6,7 @@
 
 //Converting the sensitivity value into degrees per measured unit based on the sample rate here.
 #define RAW_SENSITIVITY                 6  //mV/degree/sec, as per data sheet. Pending exact test for our chip if possible, though likely not necessary
-#define SENSITIVITY                     RAW_SENSITIVITY / 3.3 //(AnalogIn unit*1000)/degree/sec, converted range from 0-3.3v to 0-1. Pending test if possible
+#define SENSITIVITY                     1.818182//RAW_SENSITIVITY / 3.3 //(AnalogIn unit*1000)/degree/sec, converted range from 0-3.3v to 0-1. Pending test if possible
 #define GYRO_SAMPLE_RATE                200  //Hz
 const float DEGREES_PER_ANALOG_IN_UNIT = 1000 / SENSITIVITY * GYRO_SAMPLE_RATE; //Degrees per analog unit to directly multiply measurement with
 const timestamp_t GYRO_SAMPLE_PERIOD = 1.0 / GYRO_SAMPLE_RATE;  

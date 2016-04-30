@@ -13,6 +13,8 @@
 #define RIGHT 1
 #define DOWN 2
 #define LEFT 3
+#define IS_AT_BEGINNING 8
+#define IS_AT_CENTER 9
 
 #define NORTH 0
 #define EAST 1
@@ -33,6 +35,9 @@ const int MAZE_SIZE = 16;
 extern int direction; 
 extern int next_direction;
 extern int current_direction;
+
+extern bool has_left_wall;
+extern bool has_right_wall;
 
 class Cell {
 

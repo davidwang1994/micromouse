@@ -3,7 +3,7 @@
 
 #include "mbed.h"
 
-
+extern Serial pc;
 
 
 
@@ -13,20 +13,20 @@
  * Returns: boolean, if there is a front wall detected or not, for maze 
  */
 bool has_front_wall();
-
-/*
- * has_left_wall
- * Parameters: none
- * Returns: boolean, if there is a left wall detected or not, for PID control
- */
-bool has_left_wall();
-
-/*
- * has_right_wall
- * Parameters: none
- * Returns: boolean, if there is a right wall detected or not, for PID control
- */
-bool has_right_wall();
+//
+///*
+// * has_left_wall
+// * Parameters: none
+// * Returns: boolean, if there is a left wall detected or not, for PID control
+// */
+//bool has_left_wall();
+//
+///*
+// * has_right_wall
+// * Parameters: none
+// * Returns: boolean, if there is a right wall detected or not, for PID control
+// */
+//bool has_right_wall();
 
 
 /*
@@ -55,7 +55,6 @@ public:
     DigitalOut _enable;
     AnalogIn _input;
     volatile float value; 
-    Timer timer; //The timer to make read use last read value if less than 2 ms passed
     float COEFF_1;
     float COEFF_2;
     float COEFF_3;
@@ -70,24 +69,12 @@ public:
                         float c3 = 55.0111470003071f, float c4 = -229.934241342364f, float c5 = 506.986371752309f, 
                         float c6 = -502.862134567129f, float c7 = 177.712915019135f) : _enable(enable), _input(input), 
                         COEFF_1(c1), COEFF_2(c2), COEFF_3(c3), COEFF_4(c4), COEFF_5(c5), COEFF_6(c6), COEFF_7(c7) {
-        timer.start();
     }
     
     //Get the value in encoder units, samples?... 
-    float read(){
-        
-        //If not 2 ms passed, use last value
-        if (timer.read_us() <= 2000){
-            return value;
-        }
-        //Otherwise reset the timer(it keeps counting) and get new reading
-        timer.reset();
-        
+    float readIR(){
         float sum = 0;
-        //_enable = 0;
-        //_input.read();
-        //wait_us(10);
-        
+
         //Each duration takes 100us, 5 times = 0.5ms
         for (int i = 0; i < 5; i++)
         {
@@ -108,7 +95,6 @@ public:
             wait_us(75);
         }
         
-        
         sum /= 4;
         value = sum;
         
@@ -122,17 +108,18 @@ public:
         _value += COEFF_5 * sum;
         _value += COEFF_6 * square;
         _value += COEFF_7 * square * sum;
+        
         return _value;
     }
 
     //Get the number of cells away wall is
     float cell_dist(){
-        return read() / 18;
+        return readIR() / 18;
     }
 
     //Shorthand for read()
     operator float() {
-        return read();
+        return readIR();
     }
 
 };

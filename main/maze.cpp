@@ -259,11 +259,11 @@ void set_wall(int y, int x) {
         if (has_front_wall()) {
             maze[y][x]->top_wall = true;
         }
-        if (has_right_wall()) {
+        if (has_right_wall) {
             maze[y][x]->right_wall = true;
         }
         if (x > 0) {
-            if (has_left_wall()) {
+            if (has_left_wall) {
                 maze[y][x - 1]->right_wall = true;
             }
         }
@@ -274,11 +274,11 @@ void set_wall(int y, int x) {
             maze[y][x]->right_wall = true;
         }
         if (y > 0) {
-            if (has_right_wall()) {
+            if (has_right_wall) {
                 maze[y - 1][x]->top_wall = true;
             }
         }
-        if (has_left_wall()) {
+        if (has_left_wall) {
             maze[y][x]->top_wall = true;
         }
     }
@@ -290,11 +290,11 @@ void set_wall(int y, int x) {
             }
         }
         if (x > 0) {
-            if (has_right_wall()) {
+            if (has_right_wall) {
                 maze[y][x - 1]->right_wall = true;
             }
         }
-        if (has_left_wall()) {
+        if (has_left_wall) {
             maze[y][x]->right_wall = true;
         }
 
@@ -306,11 +306,11 @@ void set_wall(int y, int x) {
                 maze[y][x - 1]->right_wall = true;
             }
         }
-        if (has_right_wall()) {
+        if (has_right_wall) {
             maze[y][x]->top_wall = true;
         }
         if (y > 0) {
-            if (has_left_wall()) {
+            if (has_left_wall) {
                 maze[y - 1][x]->top_wall = true;
             }
         }

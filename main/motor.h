@@ -33,8 +33,12 @@ public:
     void operator= (float speed) {
         Motor::speed(speed);
     }
-        
+    float read(){
+        return _speed;
+    }
+    
 private:
+    volatile float _speed;
     PwmOut pwm_pin;
     DigitalOut dir;
 };

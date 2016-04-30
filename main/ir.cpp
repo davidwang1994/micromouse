@@ -9,13 +9,8 @@
  */
 float front_wall_dist()
 {
-    //float left = leftFrontIR;
     float right = rightFrontIR;
     
-    //if (left - right > 5)
-    //{
-        //pc.printf("IR Front Sensors don't match");
-    //}
     return rightFrontIR;
 }
 
@@ -39,18 +34,19 @@ float right_wall_dist()
     return rightIR;
 }
 
-//has_left_wall, for PID control
-bool has_left_wall()
-{
-    return leftIR < 12;
-}
 
-//has_right_wall, for PID control
-bool has_right_wall()
-{
-    return rightIR < 12;
-}
-
+////has_left_wall, for PID control
+//bool has_left_wall()
+//{
+//    return leftIR < 12;
+//}
+//
+////has_right_wall, for PID control
+//bool has_right_wall()
+//{
+//    return rightIR < 12;
+//}
+//
 bool has_front_wall() {
     return rightFrontIR < 12;
 }

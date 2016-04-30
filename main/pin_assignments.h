@@ -38,17 +38,18 @@ Motor rightMotor(PB_9, PB_8);
 
 
 //Sensors
-Gyro gyro(PB_0, PB_1);
+//Gyro gyro(PB_0, PB_1);
 
 Encoder leftEncoder(PB_3, PB_4); 
 Encoder rightEncoder(PB_7, PB_6); 
 
+IRSensor leftIR(PC_3, PC_5);
 IRSensor rightIR(PH_0, PA_4);
-IRSensor rightDiagonalIR(PH_1, PA_5);
+//IRSensor rightDiagonalIR(PH_1, PA_5);
 IRSensor rightFrontIR(PC_0, PA_6);
 //IRSensor leftFrontIR(PC_1, PA_7);
-IRSensor leftDiagonalIR(PC_4, PC_2);
-IRSensor leftIR(PC_3, PC_5);
+//IRSensor leftDiagonalIR(PC_4, PC_2);
+
 
 
 #endif
