@@ -102,11 +102,10 @@ float log_rm[200];
 //TODO: make sure center only has 1 entrance. 
 //TODO: verify_at_center()
 
-//TODO: add lost checking while driving/turning. Alternatively, add a timeout to drive (proportional to distance) that on too much is LOST
-
-//have maze implement it. TODO: avoid double reading ir - changed, now need maze to read given values
+//TODO: add lost checking while turning.
 
 
+//Done. have maze implement it. TODO: avoid double reading ir - changed, now need maze to read given values
 //done (most things tested). TODO: check and fix #defines.
 //Done. Now make sure other code is changedTODO: maze cant use has_wall(), instead received passed in values
 //Done.  Now there will only be one stop per turn (unless maze is slow), and no longer need to be super accurate! //TODO: if keep driving straight, as soon as it is determined, add the distance to the total distance so it doesnt stop. //TODO: carry over distance driven too far/too little. allows for much lower accuracy
@@ -162,11 +161,13 @@ void _drive_cell(){
     
     
     //If update has finished before reaching stopping and the next action is to keep driving, just add more distance and keep driving
-    if (UPDATE_FINISHED && mouse_action == DRIVE) {
+    if (UPDATE_FINISHED) {
         UPDATE_FINISHED = false;
-        total_distance += CELL_DISTANCE;
-        last_distance_left += CELL_DISTANCE;
-        pc.printf("keep going\r\n");
+        if (mouse_action == DRIVE){
+            total_distance += CELL_DISTANCE;
+            last_distance_left += CELL_DISTANCE;
+            pc.printf("keep going\r\n");
+        }
     }
     
     
@@ -208,8 +209,8 @@ void _drive_cell(){
     
     last_distance_left = distance_left;
     
-    if (motorSpeed > 0.1f){
-        motorSpeed = 0.1f;
+    if (motorSpeed > drive_top_speed){
+        motorSpeed = drive_top_speed;
     }
     
     //PID for staying in middle
@@ -239,11 +240,11 @@ void _drive_cell(){
     
     float motorSpeedAdjust = position_P * errorP - position_D * (errorP - last_position_error);
     log_sa[print_count] = motorSpeedAdjust;
-    if (motorSpeedAdjust < -0.05f){
-        motorSpeedAdjust = -0.05f;
+    if (motorSpeedAdjust < -drive_top_speed / 2){
+        motorSpeedAdjust = -drive_top_speed / 2;
     }
-    else if (motorSpeedAdjust > 0.05f ){
-        motorSpeedAdjust = 0.05f;
+    else if (motorSpeedAdjust > drive_top_speed / 2 ){
+        motorSpeedAdjust = drive_top_speed / 2;
     }
     //Set speeds
     leftMotor = log_lm[print_count] =  motorSpeed - motorSpeedAdjust;
@@ -267,9 +268,14 @@ void _drive_cell(){
 
 //Initializes driving using preset constraints
 void _drive_init(){
-    
     same_count = 0;
-    resetEncoders();
+    
+    //Keeps using last drive encoder over/under values if drive again
+    if (!LAST_ACTION_WAS_DRIVE){
+        resetEncoders();
+        LAST_ACTION_WAS_DRIVE = true;    
+    }
+    
     last_distance_left = 0;
     last_position_error = 0;
     DONE_MOVING = false;
@@ -360,11 +366,11 @@ void _turn(){
     }
     
     float motorSpeed = diffP * turn_P_constant - (lastDiffP - diffP) * turn_D_constant;
-    if (motorSpeed > 0.2f){
-        motorSpeed = 0.2f;
+    if (motorSpeed > turn_top_speed){
+        motorSpeed = turn_top_speed;
     }
-    else if (motorSpeed < -0.2f){
-        motorSpeed = -0.2f;
+    else if (motorSpeed < -turn_top_speed){
+        motorSpeed = -turn_top_speed;
     }
     turn(motorSpeed); 
     
@@ -378,6 +384,7 @@ void _turn(){
 void _turn_init(void(*done_callback)(void)){
     same_count = 0;
     resetEncoders();
+    LAST_ACTION_WAS_DRIVE = false;
     DONE_MOVING = false;
     drive_ticker.attach(&_turn, PID_SAMPLE_PERIOD);
     _turn_callback = done_callback;

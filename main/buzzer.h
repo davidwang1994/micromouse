@@ -123,6 +123,11 @@ public:
     void play(float tone, float duration);
     
     //Play the given tone for the given duration. Nonblocking. Playing new tone will immediately overwrite
+    void play_async(float tone){
+        play_async(tone, 0.4);
+    }
+    
+    //Play the given tone for the given duration. Nonblocking. Playing new tone will immediately overwrite
     void play_async(float tone, float duration);
     
     //Plays the given tone for 0.3 seconds when assigned directly. Nonblocking. Playing new tone within duration will immedaitely overwrite

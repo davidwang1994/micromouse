@@ -1,5 +1,4 @@
 #include "maze.h"
-#include "math.h"
 
 Cell *maze[MAZE_SIZE][MAZE_SIZE];
 Cell *mazeIn[MAZE_SIZE][MAZE_SIZE];
@@ -85,130 +84,6 @@ void init_maze() {
 
 void add_cell_to_update(vector <Cell*> &stack, Cell * cell) {
     stack.push_back(cell);
-}
-
-
-Cell* next_move(Cell *current){
-    // the ordering is maze[y][x]
-    int x, y, _minX, _minY, i, j;
-    // center cell indices of maze
-    int x_goal = MAZE_SIZE / 2;
-    int y_goal = (MAZE_SIZE - 1) / 2;
-    // current cell indices
-    y = current->y;
-    x = current->x;
-    // initial pos of next cell.
-    _minY = y;
-    _minX = x;
-//    print_maze();
-/*
-                                // test printing
-    if(curr_dir == TOP) std::cout << "Mouse is facing up... " << std::endl;
-    if(curr_dir == DOWN) std::cout << "Mouse is facing down... " << std::endl;
-    if(curr_dir == LEFT) std::cout << "Mouse is facing left... " << std::endl;
-    if(curr_dir == RIGHT) std::cout << "Mouse is facing right... " << std::endl;
-*/
-//    std::cout << "Mouse is at :  [ x: " << y << " , y: " << x << " ]" << "with dist: " << current->dist << std::endl;
-    // checks the next cell with the smallest distance
-    for(i = -1; i <= 1; i++){
-        for(j = -1; j <= 1; j++){
-            int next_x = x + i;
-            int next_y = y + j;
-            if(i == 0 && j == 0) continue;
-            // border cells are ignored
-            if(next_x < 0 || next_y < 0)  continue;
-            // means cell does not exist
-            if(maze[next_x][next_y] == 0) continue;   
-            // ignore diagnal cells for now
-            if((next_x != current->x) && (next_y != current->y))  continue;
-            // if the next cell has a smaller distance then check
-            if(maze[next_x][next_y]->dist < current->dist){
-                // breaking ties
-                if((next_x == _minX) && (next_y == _minY)){
-                    // check if the mouse is facing straight 0->1->2->3 counter-clockwise
-
-
-                    if((curr_dir == TOP && next_x > y) || (curr_dir == DOWN && next_y < y) ||
-                       (curr_dir == LEFT && next_x < x) || (curr_dir == RIGHT && next_x > x)){
-                        _minX = x + i;
-                        _minY = y + j;
-                       continue;
-                    }
-                    // check for whichever is closer to the center of the maze
-                    else{
-                        double prev_to_goal = sqrt(pow(x_goal - _minX, 2.0) + pow(y_goal - _minY, 2.0));
-                        double curr_to_goal = sqrt(pow(x_goal - next_x, 2.0) + pow(y_goal - next_y, 2.0));
-                        if(curr_to_goal < prev_to_goal){
-                            _minX = x + i;
-                            _minY = y + j;
-                            continue;
-                        }
-                    }
-                }
-                else{
-                    // not tie condition
-                    _minX = x + i;
-                    _minY = y + j;
-                }
-            }
-        }
-    }
-    if(_minX == x && _minY == y){
-    //    std::cout << "cell distances not updated correctly... [current is smallest]" << std::endl;
-    }
-    // signals next cell's direction
-    if((_minX < x) && (_minY == y)){
-        next_cell_direction = LEFT;
-    //    cout << "   [ Next Cell Currently at left ]" << endl;
-    //    cout << "   [ Facing Left ]" << endl;
-        curr_dir = LEFT;
-    }
-    
-    if((_minX == x) && (_minY > y)){
-        next_cell_direction = TOP;
-    //    cout << "   [ Next Cell Currently at top ]" << endl;
-    //    cout << "   [ Facing up ]" << endl;
-        curr_dir = TOP;
-    }
-    
-    if((_minX > x) && (_minY == y)){
-        next_cell_direction = RIGHT;
-    //    cout << "   [ Next Cell Currently at right ]" << endl;
-    //    cout << "   [ Facing right ]" << endl;
-        curr_dir = RIGHT;
-    }
-    
-    if((_minX == x) && (_minY < y)){
-        next_cell_direction = DOWN;
-    //    cout << "   [ Next Cell Currently at bottom ]" << endl;
-    //    cout << "   [ Facing down ]" << endl;
-        curr_dir = DOWN;
-    }
-    return maze[_minX][_minY];
-}
-
-void simulate_path(vector<Cell*> &stack, int x, int y) {
- //   std::cout << "exploring : [ " << x << " , " << y << " ]" << std::endl;
-    if (maze[x][y]->visited) {
-        return;
-    }
-    else {
-        maze[x][y]->visited = true;
-     //   set_wall(y,x);
-    }
-    if (maze[x][y]->top_wall || maze[x][y]->right_wall) {
-    	if(maze[x][y]->top_wall)
-    //		std::cout << "has an top wall..." << std::endl;
-    	else
-    //		std::cout << "has an right wall..." << std::endl;
-
-        stack.push_back(maze[x][y]);
-    //    print_maze();
-        update_distances(stack);
-    }
-        Cell * curr = next_move(maze[x][y]);
-    //    std::cout << "Next Cell at: [ " << curr->x << " , " << curr->y << " ]" << endl;
-        simulate_path(stack, curr->x, curr->y); 
 }
 
 /*
@@ -298,11 +173,11 @@ void set_wall(int y, int x) {
         if (has_front_wall()) {
             maze[y][x]->top_wall = true;
         }
-        if (has_right_wall) {
+        if (has_right_wall()) {
             maze[y][x]->right_wall = true;
         }
         if (x > 0) {
-            if (has_left_wall) {
+            if (has_left_wall()) {
                 maze[y][x - 1]->right_wall = true;
             }
         }
@@ -313,11 +188,11 @@ void set_wall(int y, int x) {
             maze[y][x]->right_wall = true;
         }
         if (y > 0) {
-            if (has_right_wall) {
+            if (has_right_wall()) {
                 maze[y - 1][x]->top_wall = true;
             }
         }
-        if (has_left_wall) {
+        if (has_left_wall()) {
             maze[y][x]->top_wall = true;
         }
     }
@@ -329,11 +204,11 @@ void set_wall(int y, int x) {
             }
         }
         if (x > 0) {
-            if (has_right_wall) {
+            if (has_right_wall()) {
                 maze[y][x - 1]->right_wall = true;
             }
         }
-        if (has_left_wall) {
+        if (has_left_wall()) {
             maze[y][x]->right_wall = true;
         }
 
@@ -345,11 +220,11 @@ void set_wall(int y, int x) {
                 maze[y][x - 1]->right_wall = true;
             }
         }
-        if (has_right_wall) {
+        if (has_right_wall()) {
             maze[y][x]->top_wall = true;
         }
         if (y > 0) {
-            if (has_left_wall) {
+            if (has_left_wall()) {
                 maze[y - 1][x]->top_wall = true;
             }
         }
@@ -548,8 +423,8 @@ void explore(vector<Cell*> &stack, int y, int x) {
         set_wall(y,x);
     }
     if (maze[y][x]->top_wall || maze[y][x]->right_wall) {
-        stack.push_back(maze[y][x]);    //COMPILE ERROR
-        update_distances(stack);        //COMPILE ERROR
+        stack.push_back(maze[y][x]);
+        update_distances(stack);
     }
 // if mouse is located bottom left of center then we want to prioritize exploring top/right
     if (y < MAZE_SIZE / 2 && x < MAZE_SIZE / 2) {
@@ -628,4 +503,3 @@ void explore(vector<Cell*> &stack, int y, int x) {
         }
     }
 }
->>>>>>> f8dd562dd076b1f0f0afd1783f949aeeaf0a95f4
