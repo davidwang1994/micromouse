@@ -16,7 +16,10 @@ int direction = NORTH; //maze internal
 //Signals from/to elsewhere:
 int current_direction = NORTH;
 int next_direction = -1; //A direction or AT_BEGINNING or AT_CENTER
-int drive_distance = 0; //In number of cells, including diagonal across the cell (counts as 1 cell)
+int drive_distance = 1; //MAZE MUST SPECIFY DISTANCE TO DRIVE IN SPEED DRIVE MODE
+
+float drive_top_speed = 0.1;
+float turn_top_speed = 0.2;
 
 bool has_left_wall = true;
 bool has_right_wall = true;
@@ -26,7 +29,15 @@ bool DONE_MOVING = true;              //Driving or turning complete
 bool UPDATING_INSTRUCTIONS = true;    //Control alg not yet saved an action to mouse_action
 bool UPDATE_FINISHED = false;       //Contorl alg has saved next action to mouse_action. Will always be false unless just finshed updating and next action has not been used yet
 
+bool LAST_ACTION_WAS_DRIVE = false;
 
+
+
+enum MouseMode {
+    EXPLORE,
+    SPEED_RUN
+};
+MouseMode mouse_mode = EXPLORE;
 
 enum GlobalState {
     STARTUP,
@@ -60,21 +71,54 @@ MouseAction mouse_action;
 #include "io.h"
 #include "mouse_control.h"
 
-//Serial pc(PA_9, PA_10);  //THIS MUST GO IN MAIN
-Serial pc(D1, D0);
+Serial pc(PA_9, PA_10);  //THIS MUST GO IN MAIN
+//Serial pc(D1, D0);
 
 
 
 
 
 Ticker ticker;
+Ticker ticker2;
+void check(){
+    ledGreen = 1;
+}
 int main() {
+    print_battery();
 
+    //gyro.enable();
+
+    
+    //wait(1.5);
+    
+    //print_gyro();
+    
+    //wait(1.5);
+    
+    //print_gyro();
+    
+    
+    //ticker.attach(&print_gyro, 1);
+    
+    //InterruptIn pb3(PB_3);
+    
+    //drive(0.01);
+    
+    //wait(2);
+    //drive(0);
+    
+    //pb3.rise(&check);
+    
+    
+    
+    
+    
+/*
     setup();
     
     wait(0.3);
     //print_ir();
-    //ticker.attach(&print_encoder, 1);
+    ticker.attach(&print_encoder, 1);
     
     
     while (userButton);
@@ -87,14 +131,19 @@ int main() {
     //drive_cell();
    
     turn_right(&drive_cell);
+    */
     
-    while (1) {
+while(1){
+    ledGreen = user_button;
+}
+    
+    /*while (1) {
         switch (global_state) {
             case LOST: 
                 lost();
                 break;
             case WAITING:
-                waiting();
+                //Does nothing and waits for something else to finish
                 break;
             case AT_BEGINNING:
                 at_beginning();
@@ -118,5 +167,5 @@ int main() {
                 break;
                 //Do nothing while in STARTUP
         }
-    }
+    }*/
 }

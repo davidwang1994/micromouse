@@ -2,10 +2,8 @@
 #define IO_H
 
 #include "drive_control.h"
-volatile float speed_adjust = 0;
-volatile float _errorP = 0;
-volatile float _irr = 0;
-volatile float _irl = 0;
+
+
 
 void print_battery(){
     pc.printf("BATTERY: %f\r\n", battery.read());
@@ -34,10 +32,19 @@ void print_ir_raw (IRSensor ir){
 
 void print_ir(){
     pc.printf("\r\nlir %f\r\n", leftIR.readIR());
+    pc.printf("rir %f\r\n", rightIR.readIR());
+    
+    pc.printf("\r\nlirF %f\r\n", leftFrontIR.readIR());
+    pc.printf("rirF %f\r\n", rightFrontIR.readIR());
+    
+    
+//    
+//    pc.printf("\r\nlirD %f\r\n", leftDiagonalIR.readIR());
+//    pc.printf("rirD %f\r\n", rightDiagonalIR.readIR());
     //print_ir_raw(leftIR);
     //pc.printf("LeftAvg: %f\r\n", leftIR.value);
     
-    pc.printf("rir %f\r\n", rightIR.readIR());
+    
     //print_ir_raw(rightIR);
     //pc.printf("Right_Avg: %f\r\n", rightIR.value);
     

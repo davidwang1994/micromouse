@@ -55,23 +55,32 @@ void save_valid_maze(){
 
 //Restores assuming at beginnning
 void restore_valid_maze(){
-    
+    //current_cell = beginning_cell;
 }
 
 
 
-
-
-void waiting() {
-    //Does nothing while waiting for something else async to finish
-}
 
 void lost(){
+    while(!user_button){
+        //Wait for button let go, if any
+    }
+    ledRed = 1;
+    ledGreen = 1;
+    ledYellow = 1;
     
-    //Wait for user to reset. Then restore_valid_maze
-    //Mouse should always be waiting for the user to reset, in which case restores valid maze every time
+    drive_ticker.detach();
+    stop();
+    restore_valid_maze();
     
+    while(user_button){
+        //Wait for button press
+    }
+    while(!user_button){
+        //Wait for button let go
+    }
     
+    global_state = AT_BEGINNING;
 }
 
 
@@ -92,26 +101,49 @@ void arrived_at_beginning() {
         global_state = LOST;
         
     }
-    
-
-
 }
-
+//Drives a circle at center and 
 bool verify_at_center(){
     
+    switch(current_direction){
+        case NORTH: next_direction = SOUTH; break;
+        case SOUTH: next_direction = NORTH; break;
+        case EAST: next_direction = WEST; break;
+        case WEST: next_direction = EAST; break;
+    }
     
-    return false;
+    if (true){
+        drive_cell();
+        while(!DONE_MOVING) { if (user_button == 0) { return false;} if (global_state == LOST) {return false;} }
+        turn_left(&drive_cell);
+        while(!DONE_MOVING) { if (user_button == 0) { return false;} if (global_state == LOST) {return false;} }
+        turn_left(&drive_cell);
+        while(!DONE_MOVING) { if (user_button == 0) { return false;} if (global_state == LOST) {return false;} }
+        turn_left(&drive_cell);
+        while(!DONE_MOVING) { if (user_button == 0) { return false;} if (global_state == LOST) {return false;} }
+        turn_right();
+    }
+    else {
+        drive_cell();
+        while(!DONE_MOVING) { if (user_button == 0) { return false;} if (global_state == LOST) {return false;} }
+        turn_right(&drive_cell);
+        while(!DONE_MOVING) { if (user_button == 0) { return false;} if (global_state == LOST) {return false;} }
+        turn_right(&drive_cell);
+        while(!DONE_MOVING) { if (user_button == 0) { return false;} if (global_state == LOST) {return false;} }
+        turn_right(&drive_cell);
+        while(!DONE_MOVING) { if (user_button == 0) { return false;} if (global_state == LOST) {return false;} }
+        turn_left();
+    }
+    
+    return true;
 }
 
 void arrived_at_center() {
     global_state = WAITING;
     
-    while (!DONE_MOVING) {
-        //Wait for move to finish
-    }
+    //Wait for arrival
+    while(!DONE_MOVING) { if (user_button == 0) { global_state = LOST; } }
     
-    
-
     //Drive all 4 center cells to verify that is at center
     if (verify_at_center()){
         save_valid_maze();                   
@@ -123,17 +155,121 @@ void arrived_at_center() {
 
 }
 
+bool not_fetched = true;
+int last_encoder_val = 0;
 void at_beginning(){
+    int encoder_val = leftEncoder;
     
+    if (mouse_mode == SPEED_RUN){
+        ledYellow = 1;
+        ledGreen = 0;
+    }
+    else {
+        ledYellow = 0;
+        ledGreen = 1;
+    }
+    
+    if (battery.read() < 0.75f){
+        ledRed = 1;
+    }
+    
+    //On press, takes off
+    if (!user_button){
+        
+        resetEncoders();
+        drive_ticker.detach();
+        if (mouse_mode == SPEED_RUN){
+            ledYellow = 1;
+            ledGreen = 0;
+        }
+        else {
+            ledYellow = 0;
+            ledGreen = 1;
+        }
+        while(!user_button){
+            //Wait for release
+        }
+        
+        if (mouse_mode == SPEED_RUN){
+            //Set speed
+            resetEncoders();
+            while(user_button){
+                if (leftEncoder < 0){
+                    resetEncoders();
+                }
+                else if (leftEncoder < 1000){
+                    buzzer.play_async(_C0);                            
+                    drive_top_speed = 0.1;
+                    turn_top_speed = 0.2;
+                }
+                else if (leftEncoder < 2000){
+                    buzzer.play_async(_D1);       
+                    drive_top_speed = 0.12;
+                    turn_top_speed = 0.24;
+                }
+                else if (leftEncoder < 3000){
+                    buzzer.play_async(_E2);       
+                    drive_top_speed = 0.14;
+                    turn_top_speed = 0.28;
+                }
+                else if (leftEncoder < 4000){
+                    buzzer.play_async(_F5);       
+                    drive_top_speed = 0.16;
+                    turn_top_speed = 0.32;
+                }
+                else if (leftEncoder < 5000){
+                    buzzer.play_async(_G6);
+                    drive_top_speed = 0.18;
+                    turn_top_speed = 0.36;
+                }
+                else if (leftEncoder < 6000){
+                    buzzer.play_async(_Ab7);
+                    drive_top_speed = 0.20;
+                    turn_top_speed = 0.40;
+                }
+                
+                wait(0.5);
+            }
+            
+            wait(2);
+            global_state = SPEEDING_TO_CENTER;
+            return;
+        }
+        else {
+            //Start explore
+            drive_top_speed = 0.1;
+            turn_top_speed = 0.2;
+            wait(2);
+            global_state = EXPLORING_TO_CENTER;
+            return;
+        }
+    }
+    
+    
+    wait(0.5);
+    if (leftEncoder - encoder_val > 1000 || leftEncoder - encoder_val < -1000 ){
+        if (mouse_mode == SPEED_RUN){
+            mouse_mode = EXPLORE;
+        }
+        else {
+            mouse_mode = SPEED_RUN;
+        }
+    }
 }
 
 void at_center(){
+    //Set maze to be ready to drive towards beginning
     
+    global_state = EXPLORING_BACK;
 }
 
 void exploring_to_center() {
     if (UPDATE_POSITION) {
         update_position();
+    }
+    
+    if (user_button == 0){
+        global_state = LOST;
     }
     
     if (UPDATING_INSTRUCTIONS) {
@@ -166,6 +302,11 @@ void exploring_back() {
         update_position();
     }
     
+    
+    if (user_button == 0){
+        global_state = LOST;
+    }
+    
     if (UPDATING_INSTRUCTIONS) {
         //Wait for instructions to finish
     }
@@ -196,6 +337,10 @@ void speed_drive_with_distance(){
 void speeding_to_center() {
     if (UPDATE_POSITION) {
         update_position();
+    }
+    
+    if (user_button == 0){
+        global_state = LOST;
     }
 
     if (UPDATING_INSTRUCTIONS) {
@@ -232,6 +377,10 @@ void speeding_to_center() {
 void speeding_back() {
     if (UPDATE_POSITION) {
         update_position();
+    }
+    
+    if (user_button == 0){
+        global_state = LOST;
     }
     
     if (UPDATING_INSTRUCTIONS) {
