@@ -17,10 +17,10 @@ const int MAZE_SIZE = 16;
 
 
 int next_cell_direction = TOP;
-int direction;
-int current_direction;
-int UPDATE_POSITION = false;
-int UPDATE_FINISHED = false;
+//int direction;
+//int current_direction;
+//int UPDATE_POSITION = false;
+//int UPDATE_FINISHED = false;
 
 class Cell {
 

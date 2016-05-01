@@ -21,6 +21,8 @@ int drive_distance = 1; //MAZE MUST SPECIFY DISTANCE TO DRIVE IN SPEED DRIVE MOD
 int mouse_x = 0;
 int mouse_y = 0;
 
+vector<Cell*> stack;
+
 float drive_top_speed = 0.1;
 float turn_top_speed = 0.2;
 
@@ -86,6 +88,7 @@ Ticker ticker2;
 void check(){
     ledGreen = 1;
 }
+
 int main() {
     print_battery();
 

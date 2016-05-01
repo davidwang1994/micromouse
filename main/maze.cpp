@@ -1,6 +1,6 @@
 #include "maze.h"
-#include <iostream>
-#include <fstream>
+//#include <iostream>
+//#include <fstream>
 
 Cell *maze[MAZE_SIZE][MAZE_SIZE];
 Cell *mazeIn[MAZE_SIZE][MAZE_SIZE];
@@ -24,7 +24,7 @@ int min4(int a, int b, int c, int d) {
     return min;
 }
 
-
+/*
 void load_maze(string file_name) {
     ifstream file(file_name);
     string top, right;
@@ -52,6 +52,7 @@ void load_maze(string file_name) {
         }
     }
 }
+ */
 /*
 void exploring_back(){
    if (UPDATE_POSITION) {
@@ -80,6 +81,7 @@ void exploring_back(){
    }
 }*/
 
+/*
 void load_ref_maze(string file_name) {
     ifstream file(file_name);
     string top, right;
@@ -109,6 +111,7 @@ void load_ref_maze(string file_name) {
         }
     }
 }
+ */
 
 
 
@@ -207,7 +210,7 @@ void add_cell_to_update(vector <Cell*> &stack, Cell * cell) {
 /* Determine the nearby cell with the smallest distance  
  *
  */
-static Cell* next_move(Cell *current){
+Cell* next_move(Cell *current){
     vector<Cell*> open_neighbors;
     vector<Cell*> min_neighbors;
     Cell *min_neighbor;
@@ -259,22 +262,18 @@ static Cell* next_move(Cell *current){
 
         if((_minX < x) && (_minY == y)){
             next_dir = LEFT;
-            cout << "--> Turning LEFT!!" << endl;
         }
 
         else if((_minX == x) && (_minY > y)){
             next_dir = TOP;
-            cout << "--> Turning TOP!!" << endl;
         }
 
         else if((_minX > x) && (_minY == y)){
             next_dir = RIGHT;
-            cout << "--> Turning RIGHT!!" << endl;
         }
 
         else if((_minX < x) && (_minY < y)){
             next_dir = DOWN;
-            cout << "--> Turning DOWN!!" << endl;
         }
 
         if (next_dir == current_direction) {
@@ -284,8 +283,8 @@ static Cell* next_move(Cell *current){
 
     }
 
-    next_direction = next_dir;
-    current_direction = next_direction;
+//    next_direction = next_dir;
+//    current_direction = next_direction;
 
     nextX = min_neighbor->x;
     nextY = min_neighbor->y;
@@ -442,7 +441,7 @@ static Cell* next_move(Cell *current){
 /*
 * Function to update the distances of the cells
 */
-static void update_distances(vector <Cell*> &stack) {
+void update_distances(vector <Cell*> &stack) {
     Cell *current;
     vector<Cell*> open_neighbors;
     vector<Cell*> neighbors;
@@ -455,7 +454,6 @@ static void update_distances(vector <Cell*> &stack) {
         y = current->y;
 
         if (is_center(current)) {
-            std::cout << "*** center found! ***" << std::endl;
             continue;
         }
 
@@ -562,7 +560,7 @@ void generate_random_walls() {
         s += "\n";
     }
 }
-
+/*
 void print_maze() {
 
     // print top wall
@@ -630,7 +628,8 @@ void print_maze() {
     printf("+\n\n");
 }
 
-
+*/
+/*
 void print_ref_maze() {
 
     // print top wall
@@ -697,7 +696,7 @@ void print_ref_maze() {
     }
     printf("+\n\n");
 }
-
+*/
 
 void find_path(vector<Cell*> &stack, int y, int x) {
 if (maze[y][x]->visited) {
@@ -769,7 +768,7 @@ void get_next_move(){
 
 
 
-static void set_wall(int y, int x) {
+void set_wall(int y, int x) {
     if (current_direction == TOP) {
         if (  mazeIn[y][x] -> top_wall  ) {
             maze[y][x]->top_wall = true;
@@ -840,8 +839,10 @@ void explore(vector<Cell*> &stack, int y, int x) {
 //    if (direction == 9) {
 //        return;
 //    }
-    cout << "explore y: " << y << " x: " << x << endl;
-//    maze[y][x]->visited = true;
+    if (maze[y][x]->visited == true) {
+return;
+}
+    maze[y][x]->visited = true;
     set_wall(y,x);
 
     if (maze[y][x]->top_wall || maze[y][x]->right_wall) {
@@ -852,7 +853,7 @@ void explore(vector<Cell*> &stack, int y, int x) {
 //    if (is_center(curr)) {
 //        direction = 9;
 //    }
-//    explore(stack, curr->y, curr->x);
+   explore(stack, curr->y, curr->x);
 }
 
 
@@ -987,20 +988,19 @@ void update_position() {
 
 
 
-
+/*
 int main() {
-    load_ref_maze("test2.maze");
-    print_ref_maze();
-
+//    load_ref_maze("test2.maze");
+//    print_ref_maze();
+//
     init_maze();
     //   test_set_wall();
-    print_maze();
+//    print_maze();
 
 
     std::vector <Cell*> vc;
     vc.push_back(maze[0][0]);
     explore(vc, 0, 0);
-    print_maze();
-//    explore(vc, 0, 0);
 //    print_maze();
 }
+ */

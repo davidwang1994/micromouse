@@ -1,6 +1,8 @@
 #ifndef MOUSE_CONTROL_H
 #define MOUSE_CONTROL_H
 
+#include "maze.h"
+#include
 
 #define NORTH 0
 #define EAST 1
@@ -40,8 +42,8 @@ void update_position() {
     //Set walls
     //then call update_maze();
 
-    y = mouse_y;
-    x = mouse_x;
+    int y = mouse_y;
+    int x = mouse_x;
 
     maze.set_wall(y,x);
 
