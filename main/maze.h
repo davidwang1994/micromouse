@@ -1,43 +1,26 @@
 #ifndef __MAZE_H__
 #define __MAZE_H__
-
 #include <cmath>
 #include <ctime>
 #include <climits>
 #include <cstdlib>
 #include <string>
 #include <vector>
-#include "ir.h" //CHANGED, removed pin_assigments
-
 #define TOP 0
 #define RIGHT 1
 #define DOWN 2
 #define LEFT 3
-#define IS_AT_BEGINNING 8
-#define IS_AT_CENTER 9
-
-#define NORTH 0
-#define EAST 1
-#define SOUTH 2
-#define WEST 3
-#define NORTH_WEST 4
-#define NORTH_EAST 5
-#define SOUTH_WEST 6
-#define SOUTH_EAST 7
-
 
 using namespace std;
 
-extern Serial pc; 
-
 const int MAZE_SIZE = 16;
 
-extern int direction; 
-extern int next_direction;
-extern int current_direction;
 
-extern bool has_left_wall;
-extern bool has_right_wall;
+int next_cell_direction = TOP;
+int direction;
+int current_direction;
+int UPDATE_POSITION = false;
+int UPDATE_FINISHED = false;
 
 class Cell {
 
@@ -50,7 +33,7 @@ public:
     bool visited;
 
     Cell(int y, int x) : y(y), x(x), dist(0), top_wall(false), right_wall(false) {}
-    Cell(int y, int x, int dist) : y(y), x(x), dist(dist), top_wall(false), right_wall(false) {if (y < 8 && x == 0) right_wall=true;}
+    Cell(int y, int x, int dist) : y(y), x(x), dist(dist), top_wall(false), right_wall(false) {}
     Cell(int y, int x, bool top_wall, bool right_wall) : y(y), x(x), top_wall(top_wall), right_wall(right_wall) {}
 };
 
@@ -67,7 +50,7 @@ void update_distances(vector<Cell*> &stack);
 
 bool fully_explored();
 
-void explore(vector<Cell> &stack, int y, int x);
+void explore(vector<Cell*> &stack, int y, int x);
 
 bool is_solved();
 

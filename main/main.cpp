@@ -18,6 +18,9 @@ int current_direction = NORTH;
 int next_direction = -1; //A direction or AT_BEGINNING or AT_CENTER
 int drive_distance = 1; //MAZE MUST SPECIFY DISTANCE TO DRIVE IN SPEED DRIVE MODE
 
+int mouse_x = 0;
+int mouse_y = 0;
+
 float drive_top_speed = 0.1;
 float turn_top_speed = 0.2;
 

@@ -36,10 +36,20 @@ void update_position() {
     UPDATE_POSITION = false;
     UPDATE_FINISHED = false;
     //Update to next cell first
-    
+
     //Set walls
     //then call update_maze();
-    
+
+    y = mouse_y;
+    x = mouse_x;
+
+    maze.set_wall(y,x);
+
+    if (maze[y][x]->top_wall || maze[y][x]->right_wall) {
+        update_distances(stack);
+    }
+    Cell *curr = maze.next_move(maze[y][x]);
+
     UPDATE_FINISHED = true;
 }
 

@@ -16,9 +16,11 @@ using namespace std;
 const int MAZE_SIZE = 16;
 
 
-int next_cell_direction;
+int next_cell_direction = TOP;
 int direction;
-int curr_dir;
+int current_direction;
+int UPDATE_POSITION = false;
+int UPDATE_FINISHED = false;
 
 class Cell {
 
@@ -31,7 +33,7 @@ public:
     bool visited;
 
     Cell(int y, int x) : y(y), x(x), dist(0), top_wall(false), right_wall(false) {}
-    Cell(int y, int x, int dist) : y(y), x(x), dist(dist), top_wall(false), right_wall(false) {if (y < 8 && x == 0) right_wall=true;}
+    Cell(int y, int x, int dist) : y(y), x(x), dist(dist), top_wall(false), right_wall(false) {}
     Cell(int y, int x, bool top_wall, bool right_wall) : y(y), x(x), top_wall(top_wall), right_wall(right_wall) {}
 };
 
@@ -48,7 +50,7 @@ void update_distances(vector<Cell*> &stack);
 
 bool fully_explored();
 
-void explore(vector<Cell> &stack, int y, int x);
+void explore(vector<Cell*> &stack, int y, int x);
 
 bool is_solved();
 
