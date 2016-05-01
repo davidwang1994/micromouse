@@ -174,8 +174,8 @@ Cell* next_move(Cell *current){
                     }
                     // check for whichever is closer to the center of the maze
                     else{
-                        double prev_to_goal = sqrt(pow(x_goal - _minX, 2.0) + pow(y_goal - _minY, 2.0));
-                        double curr_to_goal = sqrt(pow(x_goal - next_x, 2.0) + pow(y_goal - next_y, 2.0));
+                        float prev_to_goal = sqrt(pow(x_goal - _minX, 2.0) + pow(y_goal - _minY, 2.0));
+                        float curr_to_goal = sqrt(pow(x_goal - next_x, 2.0) + pow(y_goal - next_y, 2.0));
                         if(curr_to_goal < prev_to_goal){
                             _minX = x + i;
                             _minY = y + j;
