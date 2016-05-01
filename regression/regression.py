@@ -20,7 +20,7 @@ def apply_poly_func(X, coeff):
         Y += coeff[i+mid]*X**i
     return Y
 
-data = sio.loadmat('measurements.mat')
+data = sio.loadmat('WLH_0425.mat')
 
 X = data['readings']
 Y = data['distValues']
@@ -40,18 +40,21 @@ for c in coeff:
     outf.write(str(c)+'\n')
 outf.close()
 
-'''
 #Code used to generate plots
 
 X_ = np.arange(0, 1, 0.01)
 Y_ = apply_poly_func(X_, coeff)
 
+'''
 plt.figure()
 
 plt.plot(X, Y, 'co-', label="Original Data")
-
 plt.plot(X, Y_fit, 'ro-', label="Inverse deg=" + str(d) + " Fit of Data")
 plt.plot(X_, Y_, 'y-', label="Inverse deg=" + str(d) + " Function")
+
+ymin, ymax = 0, 60
+axes = plt.gca()
+axes.set_ylim([ymin,ymax])
 
 plt.legend()
 plt.show()
