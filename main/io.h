@@ -2,18 +2,60 @@
 #define IO_H
 
 #include "drive_control.h"
+volatile float speed_adjust = 0;
+volatile float _errorP = 0;
+volatile float _irr = 0;
+volatile float _irl = 0;
 
-void printStatus(){
-    pc.printf("\r\nLeft: %f\r\n", leftIR.read());
-    pc.printf("Left: %f\r\n", leftIR.value);
-    pc.printf("Right: %f\r\n", rightIR.read());
-    pc.printf("Right: %f\r\n", rightIR.value);
-    pc.printf("Front: %f\r\n", rightFrontIR.read());
-    pc.printf("Front: %f\r\n", rightFrontIR.value);
+void print_battery(){
+    pc.printf("BATTERY: %f\r\n", battery.read());
+}
+
+void print_motor(){
+    pc.printf("lm %f\r\n" , leftMotor.read());
+    pc.printf("rm %f\r\n" , rightMotor.read());
+    
+    //pc.printf("irl %f\r\n" , _irl);
+//    pc.printf("irr %f\r\n" , _irr);
+//    pc.printf("ep %f\r\n" , _errorP);
+//    pc.printf("sa %f\r\n" , speed_adjust);
+}
+
+void print_encoder(){
+    pc.printf("left encoder: %d\r\n" , leftEncoder);
+    pc.printf("right encoder: %d\r\n" , rightEncoder);
+}
+
+void print_ir_raw (IRSensor ir){
+    for (int i = 0; i < 5; i ++){
+        pc.printf(" %f\r\n", ir.last_read[i]);
+    }
+}
+
+void print_ir(){
+    pc.printf("\r\nlir %f\r\n", leftIR.readIR());
+    //print_ir_raw(leftIR);
+    //pc.printf("LeftAvg: %f\r\n", leftIR.value);
+    
+    pc.printf("rir %f\r\n", rightIR.readIR());
+    //print_ir_raw(rightIR);
+    //pc.printf("Right_Avg: %f\r\n", rightIR.value);
+    
+    //pc.printf("Front: %f\r\n", rightFrontIR.read());
+    //print_ir_raw(rightFrontIR);
+    //pc.printf("Front_Avg: %f\r\n", rightFrontIR.value);
     //pc.printf("Motor Speed: %.2f\r\n", speed);
 }
 
 
+
+void print_status(){
+    //print_encoder();
+    print_ir();
+    print_motor();
+    
+    
+}
 
 
 void play_imperial_march(){
